@@ -50,6 +50,7 @@ def search():
     recettes_to_show = []
     for k in range(len(recettes)):
         recettes_to_show.append((recettes[k], scores[k]))
+    recettes_to_show.sort(key=lambda x: x[1], reverse=True)
 
 
 @app.route('/autocomplete', methods=['GET'])
