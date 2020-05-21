@@ -9,6 +9,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" href="../static/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../static/css/jquery-ui.min.css">
     <link rel="stylesheet" href="../static/css/app.css">
 </head>
 <body>
@@ -40,7 +41,7 @@
           <form class="add-ing" method="post">
             <div class="form-row">
               <span class="col-sm-4 col-md-2 add-ing-label">Ajouter un ingrédient : </span>
-              <input class="col-sm-8 col-md-7 form-control mr-auto" type="text" name="add-ingredient" placeholder="Parmesan">
+              <input class="col-sm-8 col-md-7 form-control mr-auto" type="text" id="add-ingredient" name="add-ingredient" placeholder="Parmesan" autofocus>
               <button class="col-md-2 btn btn-primary" type="submit" >Ajouter</button>
             </div>
           </form>
@@ -57,7 +58,7 @@
           </div>
 
           <!-- Bouton rechercher -->
-          <button id="ing-search" class="btn btn-primary col-md-2 col-sm-12 align-self-end">Rechercher <i class="material-icons align-middle">search</i></button>
+          <a id="ing-search" href="?type=search" class="btn btn-primary col-md-2 col-sm-12 align-self-end">Rechercher <i class="material-icons align-middle">search</i></a>
         </div>
       </div>
       <div style="margin: 2em 0;"></div>
@@ -71,14 +72,14 @@
               <!-- Liste title -->
               <li class="list-group-item list-group-item-dark"><span>Nom de la recette</span><span class="float-right">Score</span></li>
 
-              {% for recette in recettes %}
-                {% set k = recettes.index(recette) %}
+              {% for recette, score in recettes %}
+              {% set k = recettes.index((recette, score)) %}
               <!-- Recette -->
               <div class="card">
                 <div class="card-header" id="recette-header-{{ k }}">
                   <button class="btn btn-block text-left" data-toggle="collapse" data-target="#recette-{{ k }}" type="button" aria-expanded="false" aria-controls="recette-1">
                     <span class="recette-title align-middle">{{ recette.nom }}</span>
-                    <span class="recette-score float-right badge badge-pill badge-secondary align-middle">80%</span>
+                    <span class="recette-score float-right badge badge-pill badge-secondary align-middle">{{ score }}%</span>
                   </button>
                 </div>
                 <div id="recette-{{ k }}" class="collapse" aria-labelledby="recette-header-{{ k }}" data-parent="#recetteAccordion">
@@ -90,7 +91,14 @@
 
                       <ul class="list-group">
                           {% for ing in recette.ingredients %}
-                          <li class="list-group-item">{{ ing.nom }}</li>
+                          <li class="list-group-item">
+                              {% if ing in ing_list %}
+                              <i class="align-middle material-icons icon-green">done</i>
+                              {% else %}
+                              <i class="align-middle material-icons icon-red">clear</i>
+                              {% endif %}
+                              <span class="align-middle">{{ ing.nom }}</span>
+                          </li>
                           {% endfor %}
                       </ul>
                     </div>
@@ -108,12 +116,26 @@
 
     <!-- JS -->
     <script src="../static/js/jquery-3.5.1.min.js"></script>
+    <script src="../static/js/jquery-ui.min.js"></script>
     <script src="../static/js/popper.min.js"></script>
     <script src="../static/js/bootstrap.min.js"></script>
     <script>
         $(function() {
             $('#recette-0').addClass('show');
-            console.log("marche");
+
+            $("#add-ingredient").autocomplete({
+                source:function(request, response) {
+                    $.getJSON("{{url_for('autocomplete')}}",{
+                        q: request.term, // in flask, "q" will be the argument to look for using request.args
+                    }, function(data) {
+                        response(data.matching_results); // matching_results from jsonify
+                    });
+                },
+                minLength: 2,
+                select: function(event, ui) {
+                    console.log(ui.item.value);
+                }
+            });
         })
     </script>
 </body>

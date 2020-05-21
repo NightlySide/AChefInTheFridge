@@ -38,6 +38,9 @@ class IngredientsDB(list):
 class Ingredient:
     def __init__(self, nom):
         self.nom = nom
+
+    def __eq__(self, other):
+        return self.nom == other.nom
         
         
 class RecettesDB(list):
@@ -84,6 +87,17 @@ class RecettesDB(list):
                 return rec
         return None
 
+    def get_scores(self, ing_list):
+        scores = []
+        for rec in self:
+            score = 0
+            for ing in rec.ingredients:
+                if ing in ing_list:
+                    score += 1
+            score = round((score / len(rec.ingredients)) * 100)
+            scores.append(score)
+        return scores
+
 
 class Recette:
     def __init__(self, nom, ingredients, photo):
@@ -96,6 +110,9 @@ class Recette:
             self.ingredients.append(ing)
         else:
             print(f"ATTENTION : ingrédient {ing.nom} en double")
+
+    def __eq__(self, other):
+        return self.nom == other.nom
 
 
 if __name__ == "__main__":
