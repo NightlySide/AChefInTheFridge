@@ -1,12 +1,25 @@
 [
     {
         "nom": "Gratin de chou-fleur",
-        "img": "",
+        "img": "../static/imgs/gratin-chou-fleur.jpg",
         "ingredients": [
             "Chou-fleur",
             "Lait",
             "Beurre",
             "Farine"
+        ]
+    },
+    {
+        "nom": "Soupe de carottes",
+        "img": "../static/imgs/soupe-carotte.jpg",
+        "ingredients": [
+            "Carotte",
+            "Celeri",
+            "Gousse d'ail",
+            "Huile d'olive",
+            "Poivre",
+            "Sel",
+            "Eau"
         ]
     }
 ]

@@ -3,9 +3,10 @@ from difflib import get_close_matches
 
 
 class IngredientsDB(list):
-    def __init__(self):
+    def __init__(self, path="db/ingredients.json"):
         super(IngredientsDB, self).__init__()
-        with open("db/ingredients.json", "r") as f:
+        self.path = path
+        with open(self.path, "r") as f:
             data = json.loads(f.read())
         for item in data:
             self.append(Ingredient(item["nom"]))
@@ -14,7 +15,7 @@ class IngredientsDB(list):
         data = []
         for ing in self:
             data.append({"nom": ing.nom})
-        with open("db/ingredients.json", "w") as f:
+        with open(self.path, "w") as f:
             f.write(json.dumps(data, indent=4))
 
     def name_list(self):
@@ -25,9 +26,11 @@ class IngredientsDB(list):
             self.append(ing)
 
     def get_ingredient_by_name(self, nom):
-        match = get_close_matches(nom, self.name_list())[0]
+        match = get_close_matches(nom, self.name_list())
+        if len(match) == 0:
+            return None
         for ing in self:
-            if ing.nom == match:
+            if ing.nom == match[0]:
                 return ing
         return None
 
@@ -38,9 +41,10 @@ class Ingredient:
         
         
 class RecettesDB(list):
-    def __init__(self):
+    def __init__(self, path="db/recettes.json"):
         super(RecettesDB, self).__init__()
-        with open("db/recettes.json", "r") as f:
+        self.path = path
+        with open(self.path, "r") as f:
             data = json.loads(f.read())
         ing_db = IngredientsDB()
         for item in data:
@@ -63,7 +67,7 @@ class RecettesDB(list):
             for ing in recette.ingredients:
                 ingredients.append(ing.nom)
             data.append({"nom": nom, "img": img_path, "ingredients": ingredients})
-        with open("db/recettes.json", "w") as f:
+        with open(self.path, "w") as f:
             f.write(json.dumps(data, indent=4))
 
     def name_list(self):
