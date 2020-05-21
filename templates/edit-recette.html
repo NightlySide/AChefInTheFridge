@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+{% block title %}Editer une recette{% endblock %}
+
+{% block content %}
+    <h1>Editer une recette</h1>
+    <div class="card">
+        <div class="card-body">
+            <form action="edit-recette.html" method="post" enctype='multipart/form-data'>
+                <div class="form-group">
+                    <label for="rec_name">Nom de la recette</label>
+                    <input type="text" class="form-control" id="rec_name" name="rec_name" aria-describedby="nameHelp" placeholder="Ma super recette qui déchire" value="{{ rec.nom }}">
+                    <small id="nameHelp" class="form-text text-muted">Ce nom sera utilisé partout dans le reste de l'application, donc faites attention aux fautes !</small>
+                </div>
+                <div class="form-group">
+                    <label>Ingrédients (séparés par une virgule) : </label>
+                    <input class="form-control" type="text" name="ingredients" id="ingredients" placeholder="Entrez le nom de l'ingrédient ici" value="{{ rec.show_ingredients() }}">
+                </div>
+                <div class="form-group">
+                    <label>Image de la recette</label>
+                    <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text" id="inputGroupFileAddon01">Mettre en ligne</span>
+                        </div>
+                        <div class="custom-file">
+                            <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="rec_img" accept="image/*">
+                            <label id="fileinputlabel" class="custom-file-label" for="inputGroupFile01">Inchangée...</label>
+                            <input type="hidden" name="original_img_path" value="{{ rec.photo }}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <img src="{{ rec.photo }}" class="img-thumbnail mx-auto d-block col-md-3 recette-img">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="rec_url">Lien externe vers la recette</label>
+                    <input type="url" class="form-control" id="rec_url" name="rec_url" aria-describedby="urlHelp" placeholder="http://exemple.fr" value="{{ rec.url }}">
+                    <small id="urlHelp" class="form-text text-muted">Le lien détaillant les étapes de la recette, peut être nul si la recette est maison.</small>
+                </div>
+                <button type="submit" class="btn btn-primary float-right col-sm-12 col-md-2">Mettre à jour</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script>
+    $(function() {
+        function split(val) {
+            return val.split(/,\s*/);
+        }
+        function extractLast( term ) {
+          return split( term ).pop();
+        }
+        $( "#ingredients" )
+        // don't navigate away from the field on tab when selecting an item
+        .on( "keydown", function( event ) {
+            if ( event.keyCode === $.ui.keyCode.TAB && $( this ).autocomplete( "instance" ).menu.active ) {
+                event.preventDefault();
+            }
+        })
+        .autocomplete({
+            minLength: 0,
+            source: function( request, response ) {
+                // delegate back to autocomplete, but extract the last term
+                //response( $.ui.autocomplete.filter(available_ing, extractLast( request.term ) ) );
+                $.getJSON("{{url_for('autocomplete')}}",{
+                    q: extractLast( request.term ),
+                }, function(data) {
+                    response(data.matching_results); // matching_results from jsonify
+                });
+            },
+            focus: function() {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function( event, ui ) {
+                var terms = split( this.value );
+                // remove the current input
+                terms.pop();
+                // add the selected item
+                terms.push( ui.item.value );
+                // add placeholder to get the comma-and-space at the end
+                terms.push( "" );
+                this.value = terms.join( ", " );
+                return false;
+            }
+        });
+
+        $('#inputGroupFile01').change(function(e){
+            let fileName = e.target.files[0].name;
+            $("#fileinputlabel").text(fileName);
+        });
+    })
+    </script>
+{% endblock %}

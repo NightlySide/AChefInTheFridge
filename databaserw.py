@@ -2,6 +2,10 @@ import json
 from difflib import get_close_matches
 
 
+def normalize(nom):
+    return nom.encode().decode()
+
+
 class IngredientsDB(list):
     def __init__(self, path="db/ingredients.json"):
         super(IngredientsDB, self).__init__()
@@ -9,12 +13,12 @@ class IngredientsDB(list):
         with open(self.path, "r") as f:
             data = json.loads(f.read())
         for item in data:
-            self.append(Ingredient(item["nom"]))
+            self.append(Ingredient(item["nom"], item["category"]))
 
     def write_to_db(self):
         data = []
         for ing in self:
-            data.append({"nom": ing.nom})
+            data.append({"nom": ing.nom, "category": ing.category})
         with open(self.path, "w") as f:
             f.write(json.dumps(data, indent=4))
 
@@ -25,8 +29,8 @@ class IngredientsDB(list):
         if ing.nom not in self.name_list():
             self.append(ing)
 
-    def get_ingredient_by_name(self, nom):
-        match = get_close_matches(nom, self.name_list())
+    def get_ingredient_by_name(self, nom, cutoff=0.6):
+        match = get_close_matches(nom, self.name_list(), cutoff=cutoff)
         if len(match) == 0:
             return None
         for ing in self:
@@ -34,10 +38,21 @@ class IngredientsDB(list):
                 return ing
         return None
 
+    def sort_by_name(self):
+        return sorted(self, key=lambda x: x.nom)
+
 
 class Ingredient:
-    def __init__(self, nom):
-        self.nom = nom
+    GLUCIDES = "glucides"
+    LIPIDES = "lipides"
+    PROTEINES = "proteines"
+    FIBRES = "fibres"
+    LEGUMES = "legumes"
+    EPICES = "epice"
+
+    def __init__(self, nom, category=[]):
+        self.nom = normalize(nom)
+        self.category = category
 
     def __eq__(self, other):
         return self.nom == other.nom
@@ -54,12 +69,13 @@ class RecettesDB(list):
             nom = item["nom"]
             img_path = item["img"]
             ingredients = []
+            url = item["url"]
             for ing_name in item["ingredients"]:
                 ing = ing_db.get_ingredient_by_name(ing_name)
                 if ing is None:
                     raise Exception(f"ERREUR : ingrédient \"{ing_name}\" non trouvé dans la recette \"{nom}\"")
                 ingredients.append(ing)
-            self.append(Recette(nom, ingredients, img_path))
+            self.append(Recette(nom, ingredients, img_path, url))
 
     def write_to_db(self):
         data = []
@@ -69,7 +85,7 @@ class RecettesDB(list):
             ingredients = []
             for ing in recette.ingredients:
                 ingredients.append(ing.nom)
-            data.append({"nom": nom, "img": img_path, "ingredients": ingredients})
+            data.append({"nom": nom, "img": img_path, "ingredients": ingredients, "url": recette.url})
         with open(self.path, "w") as f:
             f.write(json.dumps(data, indent=4))
 
@@ -80,12 +96,15 @@ class RecettesDB(list):
         if rec.nom not in self.name_list():
             self.append(rec)
 
-    def get_recette_by_name(self, nom):
-        match = get_close_matches(nom, self.name_list())[0]
+    def get_recette_by_name(self, nom, cutoff=0.6):
+        match = get_close_matches(nom, self.name_list(), cutoff=cutoff)[0]
         for rec in self:
             if rec.nom == match:
                 return rec
         return None
+
+    def sort_by_name(self):
+        return sorted(self, key=lambda x: x.nom)
 
     def get_scores(self, ing_list):
         scores = []
@@ -94,16 +113,20 @@ class RecettesDB(list):
             for ing in rec.ingredients:
                 if ing in ing_list:
                     score += 1
-            score = round((score / len(rec.ingredients)) * 100)
+            if len(rec.ingredients) == 0:
+                score = 0
+            else:
+                score = round((score / len(rec.ingredients)) * 100)
             scores.append(score)
         return scores
 
 
 class Recette:
-    def __init__(self, nom, ingredients, photo):
-        self.nom = nom
+    def __init__(self, nom, ingredients, photo, url):
+        self.nom = normalize(nom)
         self.ingredients = ingredients
         self.photo = photo
+        self.url = normalize(url)
 
     def ajoute_ingredient(self, ing):
         if ing.nom not in [ing.nom for ing in self.ingredients]:
@@ -113,6 +136,9 @@ class Recette:
 
     def __eq__(self, other):
         return self.nom == other.nom
+
+    def show_ingredients(self):
+        return ", ".join([ing.nom for ing in self.ingredients])
 
 
 if __name__ == "__main__":

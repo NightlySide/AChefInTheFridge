@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Ajouter un ingrédient{% endblock %}
+
+{% block content %}
+    <h1>Ajouter un ingrédient</h1>
+    <div class="card">
+        <div class="card-body">
+            <form action="add-ingredient.html" method="post">
+                <div class="form-group">
+                    <label for="ing_name">Nom de l'ingrédient</label>
+                    <input type="text" class="form-control" id="ing_name" name="ing_name" aria-describedby="nameHelp">
+                    <small id="nameHelp" class="form-text text-muted">Ce nom sera utilisé partout dans le reste de l'application, donc faites attention aux fautes !</small>
+                </div>
+                <div class="form-group">
+                    Veuillez indiquer la catégorie de l'ingrédient (Plusieurs choix sont possibles) :
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="glucides" id="glucides" name="category">
+                        <label class="form-check-label" for="glucides">Glucides</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="lipides" id="lipides" name="category">
+                        <label class="form-check-label" for="lipides">Lipides</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="proteines" id="proteines" name="category">
+                        <label class="form-check-label" for="proteines">Protéines</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="fibres" id="fibres" name="category">
+                        <label class="form-check-label" for="fibres">Fibres</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="legumes" id="legumes" name="category">
+                        <label class="form-check-label" for="legumes">Legumes</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="epice" id="epice" name="category">
+                        <label class="form-check-label" for="epice">Épices</label>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary float-right col-sm-12 col-md-2">Ajouter</button>
+            </form>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

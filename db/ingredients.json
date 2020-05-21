@@ -1,41 +1,203 @@
 [
     {
-        "nom": "Lait"
+        "nom": "Carotte",
+        "category": [
+            "fibres",
+            "legumes"
+        ]
     },
     {
-        "nom": "Farine"
+        "nom": "Lait",
+        "category": [
+            "glucides",
+            "lipides",
+            "proteines"
+        ]
     },
     {
-        "nom": "Oeuf"
+        "nom": "Oeuf",
+        "category": [
+            "proteines"
+        ]
     },
     {
-        "nom": "Carotte"
+        "nom": "Oignon",
+        "category": [
+            "fibres"
+        ]
     },
     {
-        "nom": "Chou-fleur"
+        "nom": "Parmesan",
+        "category": [
+            "glucides",
+            "lipides",
+            "proteines"
+        ]
     },
     {
-        "nom": "Beurre"
+        "nom": "Petits pois",
+        "category": [
+            "fibres",
+            "legumes"
+        ]
     },
     {
-        "nom": "Parmesan"
+        "nom": "Huile d'Olive",
+        "category": [
+            "lipides"
+        ]
     },
     {
-        "nom": "Céleri"
+        "nom": "Basilic frais",
+        "category": [
+            "epice"
+        ]
     },
     {
-        "nom": "Gousse d'ail"
+        "nom": "Poivre",
+        "category": [
+            "epice"
+        ]
     },
     {
-        "nom": "Huile d'Olive"
+        "nom": "Sel",
+        "category": [
+            "epice"
+        ]
     },
     {
-        "nom": "Poivre"
+        "nom": "P\u00e2tes",
+        "category": [
+            "glucides"
+        ]
     },
     {
-        "nom": "Sel"
+        "nom": "Courgette",
+        "category": [
+            "fibres",
+            "legumes"
+        ]
     },
     {
-        "nom": "Eau"
+        "nom": "\u00c9pinards",
+        "category": [
+            "fibres",
+            "legumes"
+        ]
+    },
+    {
+        "nom": "Ail",
+        "category": [
+            "epice"
+        ]
+    },
+    {
+        "nom": "Concombre",
+        "category": [
+            "legumes"
+        ]
+    },
+    {
+        "nom": "Yaourt nature",
+        "category": [
+            "lipides",
+            "proteines"
+        ]
+    },
+    {
+        "nom": "Chou-fleur",
+        "category": [
+            "fibres",
+            "legumes"
+        ]
+    },
+    {
+        "nom": "Beurre",
+        "category": [
+            "lipides"
+        ]
+    },
+    {
+        "nom": "Farine",
+        "category": [
+            "glucides"
+        ]
+    },
+    {
+        "nom": "Brocoli",
+        "category": [
+            "legumes"
+        ]
+    },
+    {
+        "nom": "Mozzarella",
+        "category": [
+            "glucides",
+            "lipides"
+        ]
+    },
+    {
+        "nom": "Concentr\u00e9 de tomates",
+        "category": [
+            "glucides",
+            "fibres",
+            "legumes"
+        ]
+    },
+    {
+        "nom": "Roquette",
+        "category": [
+            "fibres",
+            "legumes"
+        ]
+    },
+    {
+        "nom": "Tomates cerises",
+        "category": [
+            "legumes"
+        ]
+    },
+    {
+        "nom": "Feta",
+        "category": [
+            "glucides",
+            "lipides"
+        ]
+    },
+    {
+        "nom": "Chou chinois",
+        "category": [
+            "legumes"
+        ]
+    },
+    {
+        "nom": "Gingembre",
+        "category": []
+    },
+    {
+        "nom": "Huile de s\u00e9same",
+        "category": [
+            "lipides"
+        ]
+    },
+    {
+        "nom": "Sauce soja",
+        "category": [
+            "lipides",
+            "epice"
+        ]
+    },
+    {
+        "nom": "S\u00e9same",
+        "category": [
+            "fibres",
+            "epice"
+        ]
+    },
+    {
+        "nom": "Comt\u00e9",
+        "category": [
+            "glucides"
+        ]
     }
 ]

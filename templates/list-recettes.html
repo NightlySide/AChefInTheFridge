@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Liste des recettes{% endblock %}
+
+{% block content %}
+    <h1>Liste des recettes ({{ recettes | length }})</h1>
+    <div class="card">
+        <div class="card-body">
+            <ul class="list-group">
+                {% for rec in recettes.sort_by_name() %}
+                <li class="list-group-item">
+                <span class="align-middle" style="line-height: 2.5em">{{ rec.nom }}</span>
+                <a href="edit-recette.html?rec={{ rec.nom }}" class="float-right align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}
