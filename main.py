@@ -230,5 +230,16 @@ def edit_recette():
         return render_template("list-recettes.html", recettes=recettes)
 
 
+@app.route("/manifest.json")
+def pwa_manifest():
+    return app.send_static_file("manifest.json")
+
+
+@app.route("/sw.js")
+def pwa_sw():
+    return app.send_static_file("js/sw.js")
+
+
 if __name__ == "__main__":
     app.run(debug=True)
+    print("App launched .. waiting for connections")

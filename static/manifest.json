@@ -1,0 +1,23 @@
+{
+  "name": "A chef in the Fridge",
+  "short_name": "ChefInFridge",
+  "description": "Trouvez la recette idéale à partir des ingrédients de votre frigo !",
+  "theme_color": "#2196f3",
+  "background_color": "#2196f3",
+  "display": "standalone",
+  "orientation": "portrait",
+  "scope": "/",
+  "start_url": "/",
+  "icons": [
+    {
+        "src": "/static/imgs/pwa-100.png",
+        "type": "image/png",
+        "sizes": "100x100"
+    },
+    {
+        "src": "/static/imgs/pwa-256.png",
+        "type": "image/png",
+        "sizes": "256x256"
+    }
+  ]
+}

@@ -29,7 +29,7 @@ class IngredientsDB(list):
         if ing.nom not in self.name_list():
             self.append(ing)
 
-    def get_ingredient_by_name(self, nom, cutoff=0.6):
+    def get_ingredient_by_name(self, nom, cutoff=0.8):
         match = get_close_matches(nom, self.name_list(), cutoff=cutoff)
         if len(match) == 0:
             return None

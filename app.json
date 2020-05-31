@@ -1,0 +1,22 @@
+{
+    "name": "A Chef in the Fridge",
+    "description": "Une application en python et flask pour trouver la recette idéale à partir des ingrédients disponibles dans ton frigo.",
+    "image": "heroku/python",
+    "repository": "https://github.com/NightlySide/AChefInTheFridge",
+    "keywords": ["python", "flask" ],
+    "addons": [ ],
+    "env": {
+    "SECRET_KEY": {
+        "description": "The secret key for the Django application.",
+        "generator": "secret"
+    }
+    },
+    "environments": {
+        "test": {
+            "scripts": {
+                "test-setup": "",
+                "test": "python main.py"
+            }
+        }
+    }
+}
