@@ -141,6 +141,10 @@ class Recette:
         return ", ".join([ing.nom for ing in self.ingredients])
 
 
+# Variable de BDD
+recettes = RecettesDB("db/recettes.json")
+ingredients = IngredientsDB("db/ingredients.json")
+
 if __name__ == "__main__":
     ingDB = IngredientsDB()
     ingDB.add_item(Ingredient("Chou-fleur"))

@@ -1,79 +1,39 @@
-import difflib
 import os
 
-from flask import Flask, render_template, request, jsonify
-from werkzeug.utils import secure_filename
 from PIL import Image
-from databaserw import RecettesDB, IngredientsDB, Ingredient, Recette
-from userdata import load_ing_list, save_ing_list
+from flask import Blueprint, render_template, request
+from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = "static/imgs"
-ALLOWED_EXTENSIONS = {"png", "jpg"}
+from app.databaserw import ingredients, Ingredient, recettes, Recette
 
-app = Flask(__name__)
-app.config["SECRET_KEY"] = "3lh47vw__at-1nAOQ61vsA"
-app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
-
-recettes = RecettesDB("db/recettes.json")
-ingredients = IngredientsDB("db/ingredients.json")
-ing_list = load_ing_list()
-recettes_to_show = []
+bp = Blueprint("edit", __name__, url_prefix='/edit')
 
 
-@app.route("/", methods=["POST", "GET"])
-@app.route("/index.html", methods=["POST", "GET"])
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ["png", "jpg"]
+
+
+def resize_and_crop(file_path):
+    max_size = 512
+    try:
+        img = Image.open(file_path)
+        ratio = max(max_size / img.size[0], max_size / img.size[1])
+        img = img.resize((int(ratio * img.size[0]), int(ratio * img.size[1])), Image.ANTIALIAS)
+        background = Image.new("RGBA", (max_size, max_size), (255,255,255,0))
+        background.paste(img, ((max_size - img.size[0]) // 2, (max_size - img.size[1]) // 2))
+        background.save(file_path, "PNG")
+    except IOError as e:
+        print(f"Impossible de traiter l'image : {file_path}\n{str(e)}")
+
+
+@bp.route("/")
+@bp.route("/index.html")
 def index():
-    global ing_list, recettes_to_show
-    if request.method == "POST":
-        ing_name = request.form.get("add-ingredient")
-        ing = ingredients.get_ingredient_by_name(ing_name)
-        if ing is None:
-            print("Ingrédient non reconnu !")
-            # TODO : afficher une erreur sur la page web
-        else:
-            ing_list.append(ing)
-            save_ing_list(ing_list)
-            search()
-    if request.method == "GET":
-        rtype = request.args.get("type")
-        if rtype == "remove_ing":
-            ing_name = request.args.get("id")
-            ing = ingredients.get_ingredient_by_name(ing_name)
-            if ing is None:
-                print(f"Ingrédient non présent dans la BDD : \"{ing_name}\"")
-                # TODO : afficher une erreur sur la page web
-            elif ing not in ing_list:
-                print(f"Ingrédient non trouvé dans la liste : \"{ing_name}\"")
-                # TODO : afficher une erreur sur la page web
-            else:
-                ing_list.remove(ing)
-        elif rtype == "search":
-            search()
-    return render_template("index.html", recettes=recettes_to_show, ing_list=ing_list)
+    return render_template("edit/index.html")
 
 
-def search():
-    global recettes_to_show
-    scores = recettes.get_scores(ing_list)
-    recettes_to_show = []
-    for k in range(len(recettes)):
-        recettes_to_show.append((recettes[k], scores[k]))
-    recettes_to_show.sort(key=lambda x: x[1], reverse=True)
-
-
-@app.route('/autocomplete', methods=['GET'])
-def autocomplete():
-    search = request.args.get('q')
-    results = difflib.get_close_matches(search, ingredients.name_list(), n=5, cutoff=0.3)
-    return jsonify(matching_results=results)
-
-
-@app.context_processor
-def context_processor():
-    return dict()
-
-
-@app.route("/add-ingredient.html", methods=["POST", "GET"])
+@bp.route("/add-ingredient.html", methods=["POST", "GET"])
 def add_ingredient():
     if request.method == "POST":
         ing_name = request.form.get("ing_name")
@@ -87,10 +47,10 @@ def add_ingredient():
             ing = Ingredient(ing_name, category)
             ingredients.add_item(ing)
             ingredients.write_to_db()
-    return render_template("add-ingredient.html")
+    return render_template("edit/add-ingredient.html")
 
 
-@app.route("/add-recette.html", methods=["POST", "GET"])
+@bp.route("/add-recette.html", methods=["POST", "GET"])
 def add_recette():
     if request.method == "POST":
         rec_name = request.form.get("rec_name")
@@ -108,7 +68,7 @@ def add_recette():
                     if ing is None:
                         print(f"ATTENTION : L'ingrédient \"{ing_name}\" n'a pas été trouvé !")
                         # TODO : faire message d'erreur sur le site
-                        return render_template("add-recette.html")
+                        return render_template("edit/add-recette.html")
                     else:
                         rec_ingredients.append(ing)
             rec_url = request.form.get("rec_url")
@@ -133,36 +93,18 @@ def add_recette():
             recette = Recette(rec_name, rec_ingredients, rec_img, rec_url)
             recettes.ajoute_recette(recette)
             recettes.write_to_db()
-    return render_template("add-recette.html")
+    return render_template("edit/add-recette.html")
 
 
-def allowed_file(filename):
-    return '.' in filename and \
-           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
-
-
-def resize_and_crop(file_path):
-    max_size = 512
-    try:
-        img = Image.open(file_path)
-        ratio = max(max_size / img.size[0], max_size / img.size[1])
-        img = img.resize((int(ratio * img.size[0]), int(ratio * img.size[1])), Image.ANTIALIAS)
-        background = Image.new("RGBA", (max_size, max_size), (255,255,255,0))
-        background.paste(img, ((max_size - img.size[0]) // 2, (max_size - img.size[1]) // 2))
-        background.save(file_path, "PNG")
-    except IOError as e:
-        print(f"Impossible de traiter l'image : {file_path}\n{str(e)}")
-
-
-@app.route("/edit-ingredient.html", methods=["GET", "POST"])
+@bp.route("/edit-ingredient.html", methods=["GET", "POST"])
 def edit_ingredient():
     if request.method == "GET":
         ing_name = request.args.get("ing")
         if ing_name in [None, ""] or ingredients.get_ingredient_by_name(ing_name, cutoff=0.8) is None:
-            return render_template("list-ingredients.html", ingredients=ingredients)
+            return render_template("edit/list-ingredients.html", ingredients=ingredients)
         else:
             ing = ingredients.get_ingredient_by_name(ing_name, cutoff=0.8)
-            return render_template("edit-ingredient.html", ing=ing)
+            return render_template("edit/edit-ingredient.html", ing=ing)
     elif request.method == "POST":
         ing_name = request.form.get("ing_name")
         category = request.form.getlist("category")
@@ -175,18 +117,18 @@ def edit_ingredient():
             ingredients.write_to_db()
         else:
             print("ATTENTION : modification d'un ingrédient qui n'existe pas !")
-        return render_template("list-ingredients.html",  ingredients=ingredients)
+        return render_template("edit/list-ingredients.html",  ingredients=ingredients)
 
 
-@app.route("/edit-recette.html", methods=["GET", "POST"])
+@bp.route("/edit-recette.html", methods=["GET", "POST"])
 def edit_recette():
     if request.method == "GET":
         rec_name = request.args.get("rec")
         if rec_name in [None, ""] or recettes.get_recette_by_name(rec_name, cutoff=0.8) is None:
-            return render_template("list-recettes.html", recettes=recettes)
+            return render_template("edit/list-recettes.html", recettes=recettes)
         else:
             rec = recettes.get_recette_by_name(rec_name, cutoff=0.8)
-            return render_template("edit-recette.html", rec=rec)
+            return render_template("edit/edit-recette.html", rec=rec)
     elif request.method == "POST":
         rec_name = request.form.get("rec_name")
         if recettes.get_recette_by_name(rec_name, cutoff=0.8) is not None:
@@ -199,7 +141,7 @@ def edit_recette():
                     if ing is None:
                         print(f"ATTENTION : L'ingrédient \"{ing_name}\" n'a pas été trouvé !")
                         # TODO : faire message d'erreur sur le site
-                        return render_template(f"edit-recette.html", rec=recettes.get_recette_by_name(rec_name))
+                        return render_template("edit/edit-recette.html", rec=recettes.get_recette_by_name(rec_name))
                     else:
                         rec_ingredients.append(ing)
             rec_url = request.form.get("rec_url")
@@ -227,19 +169,4 @@ def edit_recette():
             recettes.write_to_db()
         else:
             print("ATTENTION : modification d'une recette qui n'existe pas !")
-        return render_template("list-recettes.html", recettes=recettes)
-
-
-@app.route("/manifest.webmanifest")
-def pwa_manifest():
-    return app.send_static_file("manifest.webmanifest")
-
-
-@app.route("/sw.js")
-def pwa_sw():
-    return app.send_static_file("js/sw.js")
-
-
-if __name__ == "__main__":
-    app.run(debug=True)
-    print("App launched .. waiting for connections")
+        return render_template("edit/list-recettes.html", recettes=recettes)
