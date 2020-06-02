@@ -104,12 +104,6 @@
         ]
     },
     {
-        "nom": "Beurre",
-        "category": [
-            "lipides"
-        ]
-    },
-    {
         "nom": "Farine",
         "category": [
             "glucides"
@@ -198,6 +192,13 @@
             "glucides",
             "lipides",
             "proteines"
+        ]
+    },
+    {
+        "nom": "Beurre",
+        "category": [
+            "glucides",
+            "lipides"
         ]
     }
 ]

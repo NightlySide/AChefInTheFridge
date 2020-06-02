@@ -4,6 +4,7 @@ from PIL import Image
 from flask import Blueprint, render_template, request
 from werkzeug.utils import secure_filename
 
+import app
 from app.databaserw import ingredients, Ingredient, recettes, Recette
 
 bp = Blueprint("edit", __name__, url_prefix='/edit')
@@ -20,7 +21,7 @@ def resize_and_crop(file_path):
         img = Image.open(file_path)
         ratio = max(max_size / img.size[0], max_size / img.size[1])
         img = img.resize((int(ratio * img.size[0]), int(ratio * img.size[1])), Image.ANTIALIAS)
-        background = Image.new("RGBA", (max_size, max_size), (255,255,255,0))
+        background = Image.new("RGBA", (max_size, max_size), (255, 255, 255, 0))
         background.paste(img, ((max_size - img.size[0]) // 2, (max_size - img.size[1]) // 2))
         background.save(file_path, "PNG")
     except IOError as e:
@@ -84,11 +85,11 @@ def add_recette():
                     rec_img = ""
                 elif file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
-                    save_path = os.path.join(os.getcwd(), app.config["UPLOAD_FOLDER"], filename)
+                    save_path = os.path.join(os.getcwd(), app.app.config["UPLOAD_FOLDER"], filename)
                     file.save(save_path)
                     resize_and_crop(save_path)
                     print(f"Image {filename} sauvegardée!")
-                    rec_img = os.path.join("../", app.config["UPLOAD_FOLDER"], filename)
+                    rec_img = os.path.join("../", app.app.config["UPLOAD_FOLDER"], filename)
 
             recette = Recette(rec_name, rec_ingredients, rec_img, rec_url)
             recettes.ajoute_recette(recette)
@@ -157,11 +158,11 @@ def edit_recette():
                     rec_img = request.form.get("original_img_path")
                 elif file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
-                    save_path = os.path.join(os.getcwd(), app.config["UPLOAD_FOLDER"], filename)
+                    save_path = os.path.join(os.getcwd(), app.app.config["UPLOAD_FOLDER"], filename)
                     file.save(save_path)
                     resize_and_crop(save_path)
                     print(f"Image {filename} sauvegardée!")
-                    rec_img = os.path.join("../", app.config["UPLOAD_FOLDER"], filename)
+                    rec_img = os.path.join("../", app.app.config["UPLOAD_FOLDER"], filename)
 
             recettes.remove(recettes.get_recette_by_name(rec_name))
             recette = Recette(rec_name, rec_ingredients, rec_img, rec_url)

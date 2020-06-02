@@ -56,8 +56,8 @@ class Ingredient:
 
     def __eq__(self, other):
         return self.nom == other.nom
-        
-        
+
+
 class RecettesDB(list):
     def __init__(self, path="db/recettes.json"):
         super(RecettesDB, self).__init__()
@@ -155,8 +155,6 @@ if __name__ == "__main__":
     ingDB.add_item(Ingredient("Lait"))
     ingDB.add_item(Ingredient("Parmesan"))
     ingDB.write_to_db()
-
-    #print(ingDB.get_ingredient_by_name("lait").nom)
 
     recDB = RecettesDB()
     rec = Recette("Gratin de chou-fleur", [], "")
