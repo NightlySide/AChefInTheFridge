@@ -15,9 +15,24 @@
         "sizes": "100x100"
     },
     {
+        "src": "/static/imgs/pwa-192.png",
+        "type": "image/png",
+        "sizes": "192x192"
+    },
+    {
         "src": "/static/imgs/pwa-256.png",
         "type": "image/png",
         "sizes": "256x256"
+    },
+    {
+        "src": "/static/imgs/pwa-450.png",
+        "type": "image/png",
+        "sizes": "450x450"
+    },
+    {
+        "src": "/static/imgs/pwa-512.png",
+        "type": "image/png",
+        "sizes": "512x512"
     }
   ]
 }

@@ -230,9 +230,9 @@ def edit_recette():
         return render_template("list-recettes.html", recettes=recettes)
 
 
-@app.route("/manifest.json")
+@app.route("/manifest.webmanifest")
 def pwa_manifest():
-    return app.send_static_file("manifest.json")
+    return app.send_static_file("manifest.webmanifest")
 
 
 @app.route("/sw.js")
