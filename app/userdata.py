@@ -1,5 +1,6 @@
 import json
-from databaserw import IngredientsDB
+
+from app.databaserw import IngredientsDB
 
 
 def load_ing_list():
