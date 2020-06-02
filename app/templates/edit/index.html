@@ -1,8 +1,34 @@
-<!DOCTYPE html>
-<html lang="fr">
-<head>
-</head>
-<body>
+{% extends "base.html" %}
+{% block title %}Liste des ingrédients et recettes{% endblock %}
 
-</body>
-</html>
+{% block content %}
+    <h1>Liste des recettes ({{ recettes | length }})</h1>
+    <div class="card">
+        <div class="card-body">
+            <ul class="list-group">
+                {% for rec in recettes.sort_by_name() %}
+                <li class="list-group-item">
+                <span class="align-middle" style="line-height: 2.5em">{{ rec.nom }}</span>
+                <a href="edit-recette.html?rec={{ rec.nom }}" class="float-right align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <h1>Liste des ingrédients ({{ ingredients | length }})</h1>
+    <div class="card">
+        <div class="card-body">
+            <ul class="list-group">
+                {% for ing in ingredients.sort_by_name() %}
+                <li class="list-group-item">
+                <span class="align-middle" style="line-height: 2.5em">{{ ing.nom }}</span>
+                <a href="edit-ingredient.html?ing={{ ing.nom }}" class="float-right align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+{% endblock %}

@@ -30,7 +30,7 @@ def resize_and_crop(file_path):
 @bp.route("/")
 @bp.route("/index.html")
 def index():
-    return render_template("edit/index.html")
+    return render_template("edit/index.html", recettes=recettes, ingredients=ingredients)
 
 
 @bp.route("/add-ingredient.html", methods=["POST", "GET"])

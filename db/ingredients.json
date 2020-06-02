@@ -7,14 +7,6 @@
         ]
     },
     {
-        "nom": "Lait",
-        "category": [
-            "glucides",
-            "lipides",
-            "proteines"
-        ]
-    },
-    {
         "nom": "Oeuf",
         "category": [
             "proteines"
@@ -198,6 +190,14 @@
         "nom": "Comt\u00e9",
         "category": [
             "glucides"
+        ]
+    },
+    {
+        "nom": "Lait",
+        "category": [
+            "glucides",
+            "lipides",
+            "proteines"
         ]
     }
 ]
