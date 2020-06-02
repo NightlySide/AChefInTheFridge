@@ -1,8 +1,11 @@
+language: python
+python:
+  - "3.8"
 install:
-- pip install -r requirements.txt
+  - pip install -r requirements.txt
 # command to run tests
 script:
-# unit test
-#- python -m pytest -v
-# linting test
-- flake
+  # unit test
+  #- python -m pytest -v
+  # linting test
+  - flake
