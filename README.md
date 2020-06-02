@@ -1,6 +1,7 @@
 # AChefInTheFridge
-Une application en python et flask pour trouver la recette idéale à partir des ingrédients disponibles dans ton frigo.
+![Build](https://travis-ci.org/NightlySide/AChefInTheFridge.svg?branch=master)  
 
+Une application en python et flask pour trouver la recette idéale à partir des ingrédients disponibles dans ton frigo.
 ## Ingrédients
 Les ingrédients sont définis par leur nom et une ou plusieurs catégories parmi les suivantes :
 - lipides

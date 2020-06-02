@@ -9,3 +9,8 @@ script:
   #- python -m pytest -v
   # linting test
   - flake8 --max-line-length 120  
+deploy:
+  provider: heroku
+  api_key:
+    secure: DoDYyF39RD1OAk5GnaKRsQny35VolMcg+yEZOB/K02kr6ye7IxFZeBIvFR5peFJr5D/Z3qmzrTB76TFJjvgsYwfwFarehtlT4bik8oHLzrEkbdn8IayRSj2FbK2Fdl8DDM4ISTYx+o3m+caoWDeOKbXt6DcUodshFZqC+hC7uXMJhG3W/s0PLKQ5nOWEjpTYcw53rypDr0o1ACnMoXTx5ViDruqzcUAbz5tB2R3aS1DaOw6KY7lTV+xhNS5rfEvq+6sDK3eEkZ3pkF7z5smWe3NmkLUpR2MHfgOWo0bnDGlXhWLMgIIdpRfvTN7EsJDC2wci4TK3WWt2U4+QZR8cTdmENVhv4rV54LPZrJ2BvI680Ab0oVkUi76+slHmvSlgCG3RfvCfLydXDRRT9DRzKMJJ4gJNMqZParBkvJaun7K6pcdz/9RSWkooKpo73IsXCAok9syLwez1+mEPKDv2PxB9AW+RG7HhYOyAZYtDAU6nuZyVcNiQ/IRCET5wyWW9l/5c/s/himCtlLEzO3OfRD2te+lzA+o2oCTHs40kjs/vQe1fa0iLJ86VjOEMtOBi7Wi4A5kyDLkdFqDJwu8gw+6ISuC65YsJo8zaBm0x+CJyh6stxtL44Dk+xPhZyQug+6D2JDkRdTRQkNG369U0/CFDOY+76P6A7a51UU6kFaQ=
+  app: a-chef-in-the-fridge
