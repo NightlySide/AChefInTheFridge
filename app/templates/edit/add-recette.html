@@ -59,7 +59,7 @@
             source: function( request, response ) {
                 // delegate back to autocomplete, but extract the last term
                 //response( $.ui.autocomplete.filter(available_ing, extractLast( request.term ) ) );
-                $.getJSON("{{url_for('autocomplete')}}",{
+                $.getJSON("{{url_for('search.autocomplete')}}",{
                     q: extractLast( request.term ),
                 }, function(data) {
                     response(data.matching_results); // matching_results from jsonify
