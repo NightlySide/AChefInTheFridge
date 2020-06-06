@@ -97,9 +97,11 @@ class RecettesDB(list):
             self.append(rec)
 
     def get_recette_by_name(self, nom, cutoff=0.6):
-        match = get_close_matches(nom, self.name_list(), cutoff=cutoff)[0]
+        match = get_close_matches(nom, self.name_list(), cutoff=cutoff)
+        if len(match) == 0:
+            return None
         for rec in self:
-            if rec.nom == match:
+            if rec.nom == match[0]:
                 return rec
         return None
 

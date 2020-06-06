@@ -48,6 +48,7 @@ def add_ingredient():
             ing = Ingredient(ing_name, category)
             ingredients.add_item(ing)
             ingredients.write_to_db()
+            return render_template("edit/edit-ingredient.html", ingredients=ingredients)
     return render_template("edit/add-ingredient.html")
 
 
@@ -69,7 +70,7 @@ def add_recette():
                     if ing is None:
                         print(f"ATTENTION : L'ingrédient \"{ing_name}\" n'a pas été trouvé !")
                         # TODO : faire message d'erreur sur le site
-                        return render_template("edit/add-recette.html")
+                        return render_template("edit/add-recette.html", recettes=recettes)
                     else:
                         rec_ingredients.append(ing)
             rec_url = request.form.get("rec_url")
@@ -94,6 +95,7 @@ def add_recette():
             recette = Recette(rec_name, rec_ingredients, rec_img, rec_url)
             recettes.ajoute_recette(recette)
             recettes.write_to_db()
+            return render_template("edit/list-recettes.html", recettes=recettes)
     return render_template("edit/add-recette.html")
 
 
@@ -171,3 +173,29 @@ def edit_recette():
         else:
             print("ATTENTION : modification d'une recette qui n'existe pas !")
         return render_template("edit/list-recettes.html", recettes=recettes)
+
+
+@bp.route("/remove-ingredient.html", methods=["GET"])
+def remove_ingredient():
+    ing_name = request.args.get("ing")
+    ing = ingredients.get_ingredient_by_name(ing_name)
+    if ing is not None:
+        ingredients.remove(ing)
+        ingredients.write_to_db()
+    else:
+        # TODO : afficer erreur sur le site
+        pass
+    return render_template("edit/list-ingredients.html", ingredients=ingredients)
+
+
+@bp.route("/remove-recette.html", methods=["GET"])
+def remove_recette():
+    rec_name = request.args.get("rec")
+    rec = recettes.get_recette_by_name(rec_name)
+    if rec is not None:
+        recettes.remove(rec)
+        recettes.write_to_db()
+    else:
+        # TODO : afficer erreur sur le site
+        pass
+    return render_template("edit/list-recettes.html", recettes=recettes)

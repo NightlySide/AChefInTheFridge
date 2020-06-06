@@ -9,7 +9,10 @@
                 {% for ing in ingredients.sort_by_name() %}
                 <li class="list-group-item">
                 <span class="align-middle" style="line-height: 2.5em">{{ ing.nom }}</span>
-                <a href="edit-ingredient.html?ing={{ ing.nom }}" class="float-right align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
+                    <div class="float-right">
+                        <a href="edit-ingredient.html?ing={{ ing.nom }}" class="align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
+                        <a class="align-middle btn btn-danger" onclick="confirm_delete(this, '{{ ing.nom }}');">Supprimer <i class="material-icons align-middle">delete_forever</i></a>
+                    </div>
                 </li>
                 {% endfor %}
             </ul>
@@ -18,4 +21,11 @@
 {% endblock %}
 
 {% block scripts %}
+    <script>
+    function confirm_delete(node, ing) {
+        if(confirm("Voulez-vous vraiment supprimer l'ingrédient : '" + ing + "' ?")) {
+            window.location = "remove-ingredient.html?ing="+ing;
+        }
+    }
+    </script>
 {% endblock %}
