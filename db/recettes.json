@@ -1,88 +1,287 @@
 [
     {
-        "nom": "Omelette l\u00e9g\u00e8re aux \u00e9pinards",
-        "img": "../static/imgs/omelette_epinards.jpg",
-        "ingredients": [
-            "Oeuf",
-            "\u00c9pinards",
-            "Ail",
-            "Huile d'Olive",
-            "Sel",
-            "Poivre"
-        ],
-        "url": "https://www.cuisineaz.com/recettes/omelette-legere-aux-epinards-facile-62351.aspx"
-    },
-    {
-        "nom": "Salade concombre carotte et sauce yaourt",
-        "img": "../static/imgs/salade-de-concombre-carotte.jpg",
-        "ingredients": [
-            "Concombre",
-            "Carotte",
-            "Yaourt nature",
-            "Ail",
-            "Sel"
-        ],
-        "url": "https://www.amourdecuisine.fr/article-salade-de-concombre-carotte-yaourt.html"
-    },
-    {
-        "nom": "Gratin de chou-fleur",
-        "img": "../static/imgs/gratin_chou_fleur.jpg",
-        "ingredients": [
-            "Chou-fleur",
-            "Beurre",
-            "Farine",
-            "Comt\u00e9",
-            "Lait"
-        ],
-        "url": "https://www.marmiton.org/recettes/recette_gratin-de-chou-fleur_23112.aspx"
-    },
-    {
         "nom": "Pizza de Brocoli",
         "img": "../static/imgs/pizza-brocoli.png",
         "ingredients": [
-            "Brocoli",
-            "Oeuf",
-            "Parmesan",
-            "Mozzarella",
-            "Concentr\u00e9 de tomates",
-            "Roquette",
-            "Feta",
-            "Basilic frais",
-            "Huile d'Olive",
-            "Sel",
-            "Poivre"
+            [
+                "Brocoli",
+                700,
+                "gramme"
+            ],
+            [
+                "Oeuf",
+                2,
+                "unite"
+            ],
+            [
+                "Parmesan",
+                80,
+                "gramme"
+            ],
+            [
+                "Mozzarella",
+                150,
+                "gramme"
+            ],
+            [
+                "Concentr\u00e9 de tomates",
+                4,
+                "csoupe"
+            ],
+            [
+                "Roquette",
+                10,
+                "feuille"
+            ],
+            [
+                "Feta",
+                60,
+                "gramme"
+            ],
+            [
+                "Basilic frais",
+                4,
+                "feuille"
+            ],
+            [
+                "Huile d'Olive",
+                4,
+                "csoupe"
+            ],
+            [
+                "Sel",
+                3,
+                "ccafe"
+            ],
+            [
+                "Poivre",
+                1,
+                "pincee"
+            ]
         ],
+        "substituts": {
+            "Brocoli": [
+                "Chou-fleur"
+            ],
+            "Parmesan": [
+                "Comt\u00e9"
+            ],
+            "Roquette": [
+                "Courgette"
+            ]
+        },
         "url": "https://www.rustica.fr/cuisine/pizza-sans-gluten-et-sur-pate-brocoli,13763.html"
-    },
-    {
-        "nom": "Chou chinois saut\u00e9",
-        "img": "../static/imgs/saute-chou-chinois.jpg",
-        "ingredients": [
-            "Chou chinois",
-            "Ail",
-            "Oignon",
-            "Huile de s\u00e9same",
-            "Sauce soja",
-            "S\u00e9same"
-        ],
-        "url": "https://www.cuisineactuelle.fr/recettes/choux-chinois-saute-321630"
     },
     {
         "nom": "Carbonara v\u00e9g\u00e9tariennes",
         "img": "../static/imgs/carbo_vege.jpg",
         "ingredients": [
-            "P\u00e2tes",
-            "Carotte",
-            "Courgette",
-            "Oeuf",
-            "Oignon",
-            "Parmesan",
-            "Petits pois",
-            "Huile d'Olive",
-            "Basilic frais",
-            "Poivre",
-            "Sel"
+            [
+                "P\u00e2tes",
+                200,
+                "gramme"
+            ],
+            [
+                "Carotte",
+                4,
+                "unite"
+            ],
+            [
+                "Courgette",
+                2,
+                "unite"
+            ],
+            [
+                "Oeuf",
+                2,
+                "unite"
+            ],
+            [
+                "Oignon",
+                1,
+                "unite"
+            ],
+            [
+                "Parmesan",
+                80,
+                "gramme"
+            ],
+            [
+                "Petits pois",
+                20,
+                "gramme"
+            ],
+            [
+                "Huile d'Olive",
+                4,
+                "csoupe"
+            ],
+            [
+                "Basilic frais",
+                4,
+                "feuille"
+            ],
+            [
+                "Poivre",
+                1,
+                "pincee"
+            ],
+            [
+                "Sel",
+                3,
+                "ccafe"
+            ]
         ],
+        "substituts": {},
         "url": "https://www.750g.com/carbonara-vegetarienne-r202631.htm"
+    },
+    {
+        "nom": "Chou chinois saut\u00e9",
+        "img": "../static/imgs/saute-chou-chinois.jpg",
+        "ingredients": [
+            [
+                "Chou chinois",
+                1,
+                "unite"
+            ],
+            [
+                "Oignon",
+                1,
+                "unite"
+            ],
+            [
+                "Ail",
+                5,
+                "gousse"
+            ],
+            [
+                "Gingembre",
+                3,
+                "gramme"
+            ],
+            [
+                "Huile de s\u00e9same",
+                2,
+                "csoupe"
+            ],
+            [
+                "Sauce soja",
+                2,
+                "csoupe"
+            ]
+        ],
+        "substituts": {},
+        "url": "https://www.cuisineactuelle.fr/recettes/choux-chinois-saute-321630"
+    },
+    {
+        "nom": "Falafels (40 unit\u00e9s)",
+        "img": "../static/imgs/falafels.jpg",
+        "ingredients": [
+            [
+                "Pois chiches",
+                400,
+                "gramme"
+            ],
+            [
+                "Ail",
+                5,
+                "gousse"
+            ],
+            [
+                "Coriandre",
+                20,
+                "feuille"
+            ],
+            [
+                "Persil",
+                20,
+                "feuille"
+            ],
+            [
+                "Oignon",
+                1,
+                "unite"
+            ],
+            [
+                "Bicarbonate de soude",
+                1,
+                "ccafe"
+            ],
+            [
+                "Cumin",
+                2,
+                "ccafe"
+            ],
+            [
+                "Piment",
+                1,
+                "ccafe"
+            ],
+            [
+                "Sel",
+                3,
+                "ccafe"
+            ],
+            [
+                "Farine",
+                1,
+                "csoupe"
+            ]
+        ],
+        "substituts": {},
+        "url": "https://www.cuisineculinaire.com/recette-des-falafel-facile-et-rapide/"
+    },
+    {
+        "nom": "Quiche aux poivrons, courgettes et ch\u00e8vre",
+        "img": "../static/imgs/quiche-poivron-chevre.jpg",
+        "ingredients": [
+            [
+                "P\u00e2te bris\u00e9e",
+                1,
+                "unite"
+            ],
+            [
+                "Courgette",
+                2,
+                "unite"
+            ],
+            [
+                "Poivron vert/rouge/jaune",
+                1,
+                "unite"
+            ],
+            [
+                "Oeuf",
+                3,
+                "unite"
+            ],
+            [
+                "Ch\u00e8vre",
+                100,
+                "gramme"
+            ],
+            [
+                "Cr\u00e8me liquide",
+                15,
+                "centilitre"
+            ],
+            [
+                "Huile d'Olive",
+                1,
+                "csoupe"
+            ],
+            [
+                "Sel",
+                1,
+                "pincee"
+            ],
+            [
+                "Poivre",
+                1,
+                "pincee"
+            ]
+        ],
+        "substituts": {},
+        "url": "https://www.mesrecettesfaciles.fr/recipe/quiche-aux-poivrons-courgettes-et-chevre?diaporama=9084"
     }
 ]

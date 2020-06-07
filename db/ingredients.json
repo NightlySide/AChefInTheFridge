@@ -200,5 +200,75 @@
             "glucides",
             "lipides"
         ]
+    },
+    {
+        "nom": "Jus de citron",
+        "category": [
+            "fruits",
+            "autres"
+        ]
+    },
+    {
+        "nom": "Pois chiches",
+        "category": [
+            "glucides",
+            "proteines"
+        ]
+    },
+    {
+        "nom": "Coriandre",
+        "category": [
+            "epice"
+        ]
+    },
+    {
+        "nom": "Persil",
+        "category": [
+            "epice"
+        ]
+    },
+    {
+        "nom": "Bicarbonate de soude",
+        "category": [
+            "autres"
+        ]
+    },
+    {
+        "nom": "Cumin",
+        "category": [
+            "epice"
+        ]
+    },
+    {
+        "nom": "Piment",
+        "category": [
+            "epice"
+        ]
+    },
+    {
+        "nom": "P\u00e2te bris\u00e9e",
+        "category": [
+            "glucides",
+            "lipides"
+        ]
+    },
+    {
+        "nom": "Ch\u00e8vre",
+        "category": [
+            "lipides",
+            "proteines"
+        ]
+    },
+    {
+        "nom": "Cr\u00e8me liquide",
+        "category": [
+            "lipides"
+        ]
+    },
+    {
+        "nom": "Poivron vert/rouge/jaune",
+        "category": [
+            "legumes"
+        ]
     }
 ]

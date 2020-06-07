@@ -12,8 +12,48 @@
                     <small id="nameHelp" class="form-text text-muted">Ce nom sera utilisé partout dans le reste de l'application, donc faites attention aux fautes !</small>
                 </div>
                 <div class="form-group">
-                    <label>Ingrédients (séparés par une virgule) : </label>
-                    <input class="form-control" type="text" name="ingredients" id="ingredients" placeholder="Entrez le nom de l'ingrédient ici">
+                    <label>Ingrédients : </label>
+                    <!-- Editable table -->
+                    <div id="table" class="table-editable">
+                        <table class="table table-bordered table-responsive-md table-striped text-center">
+                            <thead>
+                                <tr>
+                                    <th class="text-center">Ingrédient</th>
+                                    <th class="text-center">Quantité</th>
+                                    <th class="text-center">Substituable ?</th>
+                                    <th class="text-center">Substituts (séparés par une virgule)</th>
+                                    <th class="text-center"></th>
+                                </tr>
+                            </thead>
+                            <tbody id="ing_rows">
+                                <!-- This is our clonable table line -->
+                                <tr>
+                                    <td class="align-middle substitut_name" contenteditable="true">Ingrédient</td>
+                                    <td class="align-middle">
+                                        <span class="quantite" contenteditable="true">0</span>
+                                        <select class="float-right" name="qte_type" id="qte_type">
+                                            <option value="gramme">Gramme(s)</option>
+                                            <option value="gousse">Gousse(s)</option>
+                                            <option value="pincee">Pincée(s)</option>
+                                            <option value="centilitre">Centilitre(s)</option>
+                                            <option value="csoupe">Cuillère(s) à soupe</option>
+                                            <option value="ccafe">Cuillère(s) à café</option>
+                                            <option value="goutte">Goutte(s)</option>
+                                            <option value="unite">Unité(s)</option>
+                                            <option value="feuille">Feuille(s)</option>
+                                        </select>
+                                    </td>
+                                    <td class="align-middle"><input type="checkbox" id="substituable" name="substituable"></td>
+                                    <td class="align-middle substituts_list" contenteditable="true"></td>
+                                    <td>
+                                        <a class="align-middle btn btn-danger remove-row">Supprimer <i class="material-icons align-middle">delete_forever</i></a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <button id="add-row" class="btn btn-success"><i class="material-icons align-middle">add</i> Ajouter</button>
+                    <!-- Editable table -->
                 </div>
                 <div class="form-group">
                     <label>Image de la recette</label>
@@ -24,6 +64,7 @@
                         <div class="custom-file">
                             <input type="file" class="custom-file-input" id="inputGroupFile01" aria-describedby="inputGroupFileAddon01" name="rec_img" accept="image/*">
                             <label id="fileinputlabel" class="custom-file-label" for="inputGroupFile01">Choisissez une image...</label>
+                            <input type="hidden" name="original_img_path" value="">
                         </div>
                     </div>
                 </div>
@@ -32,7 +73,7 @@
                     <input type="url" class="form-control" id="rec_url" name="rec_url" aria-describedby="urlHelp" placeholder="http://exemple.fr">
                     <small id="urlHelp" class="form-text text-muted">Le lien détaillant les étapes de la recette, peut être nul si la recette est maison.</small>
                 </div>
-                <button type="submit" class="btn btn-primary float-right col-sm-12 col-md-2">Ajouter</button>
+                <button type="submit" id="update_btn" class="btn btn-primary float-right col-sm-12 col-md-2">Ajouter la recette</button>
             </form>
         </div>
     </div>
@@ -40,14 +81,37 @@
 
 {% block scripts %}
     <script>
-    $(function() {
-        function split(val) {
-            return val.split(/,\s*/);
+
+    function split(val) {
+        return val.split(/,\s*/);
+    }
+    function extractLast( term ) {
+        return split(term).pop();
+    }
+
+    function setEndOfContenteditable(contentEditableElement)
+    {
+        var range,selection;
+        if(document.createRange)//Firefox, Chrome, Opera, Safari, IE 9+
+        {
+            range = document.createRange();//Create a range (a range is a like the selection but invisible)
+            range.selectNodeContents(contentEditableElement);//Select the entire contents of the element with the range
+            range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+            selection = window.getSelection();//get the selection object (allows you to change selection)
+            selection.removeAllRanges();//remove any selections already made
+            selection.addRange(range);//make the range you have just created the visible selection
         }
-        function extractLast( term ) {
-          return split( term ).pop();
+        else if(document.selection)//IE 8 and lower
+        {
+            range = document.body.createTextRange();//Create a range (a range is a like the selection but invisible)
+            range.moveToElementText(contentEditableElement);//Select the entire contents of the element with the range
+            range.collapse(false);//collapse the range to the end point. false means collapse to end rather than the start
+            range.select();//Select the range (make it the visible selection
         }
-        $( "#ingredients" )
+    }
+
+    function update_events() {
+      $( ".substituts_list" )
         // don't navigate away from the field on tab when selecting an item
         .on( "keydown", function( event ) {
             if ( event.keyCode === $.ui.keyCode.TAB && $( this ).autocomplete( "instance" ).menu.active ) {
@@ -70,22 +134,110 @@
                 return false;
             },
             select: function( event, ui ) {
-                var terms = split( this.value );
+                //console.log($(this));
+                var terms = split( $(this).html() );
                 // remove the current input
                 terms.pop();
                 // add the selected item
                 terms.push( ui.item.value );
                 // add placeholder to get the comma-and-space at the end
                 terms.push( "" );
-                this.value = terms.join( ", " );
+                $(this).html(terms.join( ", " ));
+                setEndOfContenteditable(this);
                 return false;
             }
         });
+
+        $( ".substitut_name" )
+        // don't navigate away from the field on tab when selecting an item
+        .on( "keydown", function( event ) {
+            if ( event.keyCode === $.ui.keyCode.TAB && $( this ).autocomplete( "instance" ).menu.active ) {
+                event.preventDefault();
+            }
+        })
+        .autocomplete({
+            minLength: 0,
+            source: function( request, response ) {
+                // delegate back to autocomplete, but extract the last term
+                //response( $.ui.autocomplete.filter(available_ing, extractLast( request.term ) ) );
+                $.getJSON("{{url_for('search.autocomplete')}}",{
+                    q: request.term,
+                }, function(data) {
+                    response(data.matching_results); // matching_results from jsonify
+                });
+            },
+            focus: function() {
+                // prevent value inserted on focus
+                return false;
+            },
+            select: function( event, ui ) {
+                $(this).html(ui.item.value);
+                setEndOfContenteditable(this);
+                return false;
+            }
+        });
+    };
+
+    $(function() {
+        update_events();
 
         $('#inputGroupFile01').change(function(e){
             let fileName = e.target.files[0].name;
             $("#fileinputlabel").text(fileName);
         });
     })
+
+    $("#add-row").click(function(event) {
+        event.preventDefault();
+        $("#ing_rows").append('<!-- This is our clonable table line -->\n' +
+            '                                <tr>\n' +
+            '                                    <td class="align-middle substitut_name" contenteditable="true"></td>\n' +
+            '                                    <td class="align-middle">\n' +
+            '                                        <span class="quantite" contenteditable="true">0</span>\n' +
+            '                                        <select class="float-right" name="qte_type" id="qte_type">\n' +
+            '                                            <option value="gramme">Gramme(s)</option>\n' +
+            '                                            <option value="gousse">Gousse(s)</option>\n' +
+            '                                            <option value="pincee">Pincée(s)</option>\n' +
+            '                                            <option value="centilitre">Centilitre(s)</option>\n' +
+            '                                            <option value="csoupe">Cuillère(s) à soupe</option>\n' +
+            '                                            <option value="ccafe">Cuillère(s) à café</option>\n' +
+            '                                            <option value="goutte">Goutte(s)</option>\n' +
+            '                                            <option value="unite">Unité(s)</option>\n' +
+            '                                            <option value="feuille">Feuilles(s)</option>\n' +
+            '                                        </select>\n' +
+            '                                    </td>\n' +
+            '                                    <td class="align-middle"><input type="checkbox" id="substituable" name="substituable"></td>\n' +
+            '                                    <td class="align-middle substituts_list" contenteditable="true"></td>\n' +
+            '                                    <td>\n' +
+            '                                        <a class="align-middle btn btn-danger remove-row">Supprimer <i class="material-icons align-middle">delete_forever</i></a>\n' +
+            '                                    </td>\n' +
+            '                                </tr>');
+        update_events();
+    });
+
+    $("#table").on('click', '.remove-row', function () {
+       $(this).parents('tr').detach();
+     });
+
+    // Récupère le contenu du tableau des ingrédients
+    $("#update_btn").click(function(event) {
+        //event.preventDefault();
+
+        let ingredients = [];
+        $("#ing_rows > tr").each(function (index) {
+            let ing_nom = $(this).children()[0].innerText;
+            let qte = $(this).find(".quantite")[0].innerText;
+            let qte_type = $(this).find("select")[0].value;
+            let has_sub = $(this).find("input")[0].checked;
+            let subs = [];
+            if (has_sub) {
+                subs = $(this).children()[3].innerText.split(",");
+            }
+            ingredients.push({"nom": ing_nom, "est_substituable": has_sub, "substituts": subs, "qte_type": qte_type, "qte": qte});
+        });
+        console.log(ingredients);
+        $("form").append("<input type='hidden' id='ing_list' name='ing_list' value='"+JSON.stringify(ingredients).replace(/[\/\(\)\']/g, "&apos;")+"'>");
+    });
+
     </script>
 {% endblock %}

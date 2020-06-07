@@ -1,3 +1,4 @@
+import json
 import os
 
 from PIL import Image
@@ -48,7 +49,7 @@ def add_ingredient():
             ing = Ingredient(ing_name, category)
             ingredients.add_item(ing)
             ingredients.write_to_db()
-            return render_template("edit/edit-ingredient.html", ingredients=ingredients)
+            return render_template("edit/list-ingredients.html", ingredients=ingredients)
     return render_template("edit/add-ingredient.html")
 
 
@@ -62,16 +63,29 @@ def add_recette():
             print(recettes.get_recette_by_name(rec_name, cutoff=0.8).nom)
         else:
             rec_ingredients = []
-            rec_img = ""
-            ing_list = request.form.get("ingredients").split(",")
-            for ing_name in ing_list:
+            rec_substituts = {}
+            rec_img = []
+            ing_list = json.loads(request.form.get("ing_list"))
+            for ing_data in ing_list:
+                ing_name = ing_data["nom"]
                 if ing_name not in ["", " "]:
                     ing = ingredients.get_ingredient_by_name(ing_name)
                     if ing is None:
                         print(f"ATTENTION : L'ingrédient \"{ing_name}\" n'a pas été trouvé !")
                         # TODO : faire message d'erreur sur le site
-                        return render_template("edit/add-recette.html", recettes=recettes)
+                        return render_template("edit/add-recette.html")
                     else:
+                        ing.set_quantity(ing_data["qte"], ing_data["qte_type"])
+                        if ing_data["est_substituable"]:
+                            subs = []
+                            for sub_name in ing_data["substituts"]:
+                                if sub_name not in ["", " "]:
+                                    sub_ing = ingredients.get_ingredient_by_name(sub_name)
+                                    if sub_ing is None:
+                                        print(f"ATTENTION : Le substitut \"{sub_name}\" n'a pas été trouvé !")
+                                        # TODO : faire message d'erreur sur le site
+                                    subs.append(sub_ing)
+                            rec_substituts[ing_name] = subs
                         rec_ingredients.append(ing)
             rec_url = request.form.get("rec_url")
 
@@ -86,13 +100,13 @@ def add_recette():
                     rec_img = ""
                 elif file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
-                    save_path = os.path.join(os.getcwd(), app.app.config["UPLOAD_FOLDER"], filename)
+                    save_path = os.path.join(app.app.config["ABS_UPLOAD_FOLDER"], filename)
                     file.save(save_path)
                     resize_and_crop(save_path)
                     print(f"Image {filename} sauvegardée!")
-                    rec_img = os.path.join("../", app.app.config["UPLOAD_FOLDER"], filename)
+                    rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
 
-            recette = Recette(rec_name, rec_ingredients, rec_img, rec_url)
+            recette = Recette(rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
             recettes.ajoute_recette(recette)
             recettes.write_to_db()
             return render_template("edit/list-recettes.html", recettes=recettes)
@@ -134,11 +148,14 @@ def edit_recette():
             return render_template("edit/edit-recette.html", rec=rec)
     elif request.method == "POST":
         rec_name = request.form.get("rec_name")
+        # print(json.loads(request.form.get("ing_list")))
         if recettes.get_recette_by_name(rec_name, cutoff=0.8) is not None:
             rec_ingredients = []
+            rec_substituts = {}
             rec_img = []
-            ing_list = request.form.get("ingredients").split(",")
-            for ing_name in ing_list:
+            ing_list = json.loads(request.form.get("ing_list"))
+            for ing_data in ing_list:
+                ing_name = ing_data["nom"]
                 if ing_name not in ["", " "]:
                     ing = ingredients.get_ingredient_by_name(ing_name)
                     if ing is None:
@@ -146,6 +163,17 @@ def edit_recette():
                         # TODO : faire message d'erreur sur le site
                         return render_template("edit/edit-recette.html", rec=recettes.get_recette_by_name(rec_name))
                     else:
+                        ing.set_quantity(ing_data["qte"], ing_data["qte_type"])
+                        if ing_data["est_substituable"]:
+                            subs = []
+                            for sub_name in ing_data["substituts"]:
+                                if sub_name not in ["", " "]:
+                                    sub_ing = ingredients.get_ingredient_by_name(sub_name)
+                                    if sub_ing is None:
+                                        print(f"ATTENTION : Le substitut \"{sub_name}\" n'a pas été trouvé !")
+                                        # TODO : faire message d'erreur sur le site
+                                    subs.append(sub_ing)
+                            rec_substituts[ing_name] = subs
                         rec_ingredients.append(ing)
             rec_url = request.form.get("rec_url")
 
@@ -160,14 +188,14 @@ def edit_recette():
                     rec_img = request.form.get("original_img_path")
                 elif file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
-                    save_path = os.path.join(os.getcwd(), app.app.config["UPLOAD_FOLDER"], filename)
+                    save_path = os.path.join(app.app.config["ABS_UPLOAD_FOLDER"], filename)
                     file.save(save_path)
                     resize_and_crop(save_path)
                     print(f"Image {filename} sauvegardée!")
-                    rec_img = os.path.join("../", app.app.config["UPLOAD_FOLDER"], filename)
+                    rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
 
             recettes.remove(recettes.get_recette_by_name(rec_name))
-            recette = Recette(rec_name, rec_ingredients, rec_img, rec_url)
+            recette = Recette(rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
             recettes.ajoute_recette(recette)
             recettes.write_to_db()
         else:

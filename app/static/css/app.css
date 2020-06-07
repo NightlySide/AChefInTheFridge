@@ -84,3 +84,11 @@ form.add-ing {
   top: 1px;
   left: 1px;
 }
+
+.quantite {
+    margin-right: 1em;
+    padding: 0.4em;
+    height: 100%;
+    vertical-align: middle !important;
+    display: inline-block;
+}

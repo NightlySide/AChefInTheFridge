@@ -14,7 +14,7 @@ def load_ing_list():
 
 
 def save_ing_list(ing_list):
-    data = []
+    data = {}
     with open("db/userdata.json", "r") as f:
         data = json.loads(f.read())
     res = []

@@ -64,12 +64,18 @@
                   <ul class="list-group">
                       {% for ing in recette.ingredients %}
                       <li class="list-group-item">
-                          {% if ing in ing_list %}
+                          {% if recette.ingredient_dans_recette(ing, ing_list) %}
                           <i class="align-middle material-icons icon-green">done</i>
                           {% else %}
                           <i class="align-middle material-icons icon-red">clear</i>
                           {% endif %}
-                          <span class="align-middle">{{ ing.nom }}</span>
+                          <span class="align-middle">
+                              {{ ing.nom }}
+                              {% if recette.est_substituable(ing) %}
+                              <small class="substituts">(Substitut : {{ recette.get_substituts(ing.nom) }})</small>
+                              {% endif %}
+                          </span>
+                          <span class="align-middle float-right">{{ ing.quantite }}</span>
                       </li>
                       {% endfor %}
                   </ul>
