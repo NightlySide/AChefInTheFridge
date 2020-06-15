@@ -4,3 +4,5 @@ Pillow~=6.2.1
 gunicorn
 flake8
 mysqlclient~=1.4.6
+requests~=2.23.0
+cryptography~=2.9.2
