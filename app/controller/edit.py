@@ -6,7 +6,7 @@ from flask import Blueprint, render_template, request
 from werkzeug.utils import secure_filename
 
 import app
-from app.databaserw import ingredients, Ingredient, recettes, Recette
+from app.sql_db import ingredients, Ingredient, recettes, Recette
 
 bp = Blueprint("edit", __name__, url_prefix='/edit')
 

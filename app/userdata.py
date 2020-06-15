@@ -1,9 +1,17 @@
 import json
 
-from app.databaserw import IngredientsDB
+from app.sql_db import IngredientsDB
 
 
 def load_ing_list():
+    return []
+
+
+def save_ing_list(ing_list):
+    pass
+
+
+def local_load_ing_list():
     ing_db = IngredientsDB("db/ingredients.json")
     with open("db/userdata.json", "r") as f:
         data = json.loads(f.read())["ing_list"]
@@ -13,7 +21,7 @@ def load_ing_list():
     return res
 
 
-def save_ing_list(ing_list):
+def local_save_ing_list(ing_list):
     data = {}
     with open("db/userdata.json", "r") as f:
         data = json.loads(f.read())

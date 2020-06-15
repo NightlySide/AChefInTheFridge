@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
+    <data-source source="LOCAL" name="MySQL - achefinthefridge@ieta-docs.ddns.net" uuid="5e684f86-70b2-4664-bf9c-2030f735022f">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://ieta-docs.ddns.net:33006/achefinthefridge</jdbc-url>
+    </data-source>
+    <data-source source="LOCAL" name="MySQL - achefinthefridge@ieta-docs.ddns.net [2]" uuid="893f6be2-fd79-458c-a81c-83c8b8b6d997">
+      <driver-ref>mysql.8</driver-ref>
+      <synchronize>true</synchronize>
+      <jdbc-driver>com.mysql.cj.jdbc.Driver</jdbc-driver>
+      <jdbc-url>jdbc:mysql://ieta-docs.ddns.net:33006/achefinthefridge</jdbc-url>
+      <driver-properties>
+        <property name="serverTimezone" value="UTC" />
+      </driver-properties>
+    </data-source>
+  </component>
+</project>
