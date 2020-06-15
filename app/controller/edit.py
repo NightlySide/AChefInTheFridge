@@ -46,9 +46,8 @@ def add_ingredient():
             print("ATTENTION : ingrédient en doublon on enregistre pas")
             print(ingredients.get_ingredient_by_name(ing_name, cutoff=0.8).nom)
         else:
-            ing = Ingredient(ing_name, category)
+            ing = Ingredient(ingredients.get_next_id(), ing_name, category)
             ingredients.add_item(ing)
-            ingredients.write_to_db()
             return render_template("edit/list-ingredients.html", ingredients=ingredients)
     return render_template("edit/add-ingredient.html")
 
@@ -57,7 +56,7 @@ def add_ingredient():
 def add_recette():
     if request.method == "POST":
         rec_name = request.form.get("rec_name")
-        if recettes.get_recette_by_name(rec_name, cutoff=0.8) is not None:
+        if recettes.get_recette_by_name(rec_name, cutoff=0.9) is not None:
             # TODO : envoyer un message d'erreur sur le site
             print("ATTENTION : recette en doublon on enregistre pas")
             print(recettes.get_recette_by_name(rec_name, cutoff=0.8).nom)
@@ -106,9 +105,8 @@ def add_recette():
                     print(f"Image {filename} sauvegardée!")
                     rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
 
-            recette = Recette(rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
+            recette = Recette(recettes.get_next_id(), rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
             recettes.ajoute_recette(recette)
-            recettes.write_to_db()
             return render_template("edit/list-recettes.html", recettes=recettes)
     return render_template("edit/add-recette.html")
 
@@ -116,22 +114,21 @@ def add_recette():
 @bp.route("/edit-ingredient.html", methods=["GET", "POST"])
 def edit_ingredient():
     if request.method == "GET":
-        ing_name = request.args.get("ing")
-        if ing_name in [None, ""] or ingredients.get_ingredient_by_name(ing_name, cutoff=0.8) is None:
+        ing_id = request.args.get("ing")
+        if ing_id in [None, ""] or ingredients.get_ingredient_by_id(int(ing_id)) is None:
             return render_template("edit/list-ingredients.html", ingredients=ingredients)
         else:
-            ing = ingredients.get_ingredient_by_name(ing_name, cutoff=0.8)
+            ing = ingredients.get_ingredient_by_id(int(ing_id))
             return render_template("edit/edit-ingredient.html", ing=ing)
     elif request.method == "POST":
+        ing_id = request.form.get("ing_id")
         ing_name = request.form.get("ing_name")
         category = request.form.getlist("category")
 
-        if ingredients.get_ingredient_by_name(ing_name, cutoff=0.8) is not None:
+        if ingredients.get_ingredient_by_id(int(ing_id)) is not None:
             # TODO : envoyer un message d'erreur sur le site
-            ingredients.remove(ingredients.get_ingredient_by_name(ing_name, cutoff=0.8))
-            ing = Ingredient(ing_name, category)
-            ingredients.add_item(ing)
-            ingredients.write_to_db()
+            ing = Ingredient(ing_id, ing_name, category)
+            ingredients.edit_item(ing)
         else:
             print("ATTENTION : modification d'un ingrédient qui n'existe pas !")
         return render_template("edit/list-ingredients.html",  ingredients=ingredients)
@@ -140,16 +137,17 @@ def edit_ingredient():
 @bp.route("/edit-recette.html", methods=["GET", "POST"])
 def edit_recette():
     if request.method == "GET":
-        rec_name = request.args.get("rec")
-        if rec_name in [None, ""] or recettes.get_recette_by_name(rec_name, cutoff=0.8) is None:
+        rec_id = request.args.get("rec")
+        if rec_id in [None, ""] or recettes.get_recette_by_id(int(rec_id)) is None:
             return render_template("edit/list-recettes.html", recettes=recettes)
         else:
-            rec = recettes.get_recette_by_name(rec_name, cutoff=0.8)
+            rec = recettes.get_recette_by_id(int(rec_id))
             return render_template("edit/edit-recette.html", rec=rec)
     elif request.method == "POST":
+        rec_id = int(request.form.get("rec_id"))
         rec_name = request.form.get("rec_name")
         # print(json.loads(request.form.get("ing_list")))
-        if recettes.get_recette_by_name(rec_name, cutoff=0.8) is not None:
+        if recettes.get_recette_by_id(rec_id) is not None:
             rec_ingredients = []
             rec_substituts = {}
             rec_img = []
@@ -194,10 +192,8 @@ def edit_recette():
                     print(f"Image {filename} sauvegardée!")
                     rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
 
-            recettes.remove(recettes.get_recette_by_name(rec_name))
-            recette = Recette(rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
-            recettes.ajoute_recette(recette)
-            recettes.write_to_db()
+            recette = Recette(rec_id, rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
+            recettes.edit_recette(recette)
         else:
             print("ATTENTION : modification d'une recette qui n'existe pas !")
         return render_template("edit/list-recettes.html", recettes=recettes)
@@ -205,11 +201,10 @@ def edit_recette():
 
 @bp.route("/remove-ingredient.html", methods=["GET"])
 def remove_ingredient():
-    ing_name = request.args.get("ing")
-    ing = ingredients.get_ingredient_by_name(ing_name)
+    ing_id = request.args.get("ing")
+    ing = ingredients.get_ingredient_by_id(int(ing_id))
     if ing is not None:
-        ingredients.remove(ing)
-        ingredients.write_to_db()
+        ingredients.remove_item(ing)
     else:
         # TODO : afficer erreur sur le site
         pass
@@ -218,11 +213,10 @@ def remove_ingredient():
 
 @bp.route("/remove-recette.html", methods=["GET"])
 def remove_recette():
-    rec_name = request.args.get("rec")
-    rec = recettes.get_recette_by_name(rec_name)
+    rec_id = request.args.get("rec")
+    rec = recettes.get_recette_by_id(int(rec_id))
     if rec is not None:
-        recettes.remove(rec)
-        recettes.write_to_db()
+        recettes.remove_recette(rec)
     else:
         # TODO : afficer erreur sur le site
         pass

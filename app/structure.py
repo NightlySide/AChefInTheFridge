@@ -1,10 +1,10 @@
 def normalize(nom):
-    return nom.encode().decode()
+    return nom.encode("utf8").decode()
 
 
 class Recette:
     def __init__(self, id, nom, ingredients, substituts, photo, url):
-        self.id = id
+        self.id = int(id)
         self.nom = normalize(nom)
         self.ingredients = ingredients
         self.substituts = substituts
@@ -67,7 +67,7 @@ class Ingredient:
     EPICES = "epice"
 
     def __init__(self, id, nom, category=[]):
-        self.id = id
+        self.id = int(id)
         self.nom = normalize(nom)
         self.category = category
         self.quantite = None

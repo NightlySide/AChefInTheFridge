@@ -6,7 +6,7 @@ import MySQLdb as mbd
 import requests
 import json
 
-from app.structure import Ingredient, Recette
+from app.structure import Ingredient, Recette, normalize
 
 
 def sql_request(query):
@@ -36,13 +36,14 @@ def sql_request(query):
 class IngredientsDB(list):
     def __init__(self):
         super(IngredientsDB, self).__init__()
+        self._update_content()
+
+    def _update_content(self):
+        self.clear()
         rows = sql_request("SELECT * from ingredients")
         for row in rows:
             id, nom, category = row
-            self.append(Ingredient(id, nom, category.split(",")))
-
-    def write_to_db(self):
-        pass
+            self.append(Ingredient(id, nom, normalize(category).split(",")))
 
     def name_list(self):
         return [ing.nom for ing in self]
@@ -52,7 +53,28 @@ class IngredientsDB(list):
 
     def add_item(self, ing):
         if ing.id not in self.id_list():
-            self.append(ing)
+            query = f"INSERT INTO ingredients (id, nom, categorie) " \
+                    f"VALUES ('{ing.id}', '{ing.nom}', '{','.join(ing.category)}')"
+            sql_request(query)
+            self._update_content()
+
+    def edit_item(self, ing):
+        if ing.id not in self.id_list():
+            raise Exception(f"Ingrédient : \"{ing.nom}\" pas dans la base de données")
+        else:
+            query = f"UPDATE ingredients SET " \
+                    f"nom = '{ing.nom}', categorie = '{','.join(ing.category)}' " \
+                    f"WHERE id = {ing.id}"
+            sql_request(query)
+            self._update_content()
+
+    def remove_item(self, ing):
+        if ing.id not in self.id_list():
+            raise Exception(f"Ingrédient : \"{ing.nom}\" pas dans la base de données")
+        else:
+            query = f"DELETE FROM ingredients WHERE id = {ing.id}"
+            sql_request(query)
+            self._update_content()
 
     def get_ingredient_by_name(self, nom, cutoff=0.8):
         match = get_close_matches(nom, self.name_list(), cutoff=cutoff)
@@ -69,6 +91,9 @@ class IngredientsDB(list):
                 return ing
         return None
 
+    def get_next_id(self):
+        return max([ing.id for ing in self]) + 1
+
     def sort_by_name(self):
         return sorted(self, key=lambda x: x.nom)
 
@@ -76,13 +101,17 @@ class IngredientsDB(list):
 class RecettesDB(list):
     def __init__(self):
         super(RecettesDB, self).__init__()
+        self._update_content()
+
+    def _update_content(self):
+        self.clear()
         rows = sql_request("SELECT * FROM recettes")
         ing_db = IngredientsDB()
         for row in rows:
             id, nom, img_path, ing_list, sub_list, url = row
             ingredients = []
             substituts = {}
-            for ing_name, qte, qte_type in json.loads(ing_list):
+            for ing_name, qte, qte_type in json.loads(normalize(ing_list)):
                 ing = ing_db.get_ingredient_by_name(ing_name)
                 if ing is None:
                     raise Exception(f"ERREUR : ingrédient \"{ing_name}\" non trouvé dans la recette \"{nom}\"")
@@ -90,10 +119,12 @@ class RecettesDB(list):
                 ingredients.append(ing)
             if sub_list != "":
                 for sub_name in json.loads(sub_list):
+                    sub_name = normalize(sub_name)
                     if ing_db.get_ingredient_by_name(sub_name) is None:
                         raise Exception(f"ERREUR : ingrédient \"{sub_name}\" comme substitut dans \"{nom}\"")
                     sub = []
                     for ing_name in json.loads(sub_list)[sub_name]:
+                        ing_name = normalize(ing_name)
                         ing = ing_db.get_ingredient_by_name(ing_name)
                         if ing is None:
                             raise Exception(f"ERREUR : ingrédient \"{ing_name}\" non trouvé dans les substituts de la "
@@ -101,9 +132,6 @@ class RecettesDB(list):
                         sub.append(ing)
                     substituts[sub_name] = sub
             self.append(Recette(id, nom, ingredients, substituts, img_path, url))
-
-    def write_to_db(self):
-        pass
 
     def name_list(self):
         return [rec.nom for rec in self]
@@ -113,7 +141,36 @@ class RecettesDB(list):
 
     def ajoute_recette(self, rec):
         if rec.id not in self.id_list():
-            self.append(rec)
+            ing_list = [[ing.nom, ing.quantite.qte, ing.quantite.type] for ing in rec.ingredients]
+            sub_list = {key: [ing.nom for ing in rec.substituts[key]] for key in rec.substituts}
+            query = f"INSERT INTO recettes (id, nom, img, ingredients, substituts, url) " \
+                    f"VALUES ('{rec.id}', '{rec.nom}', '{rec.photo}', " \
+                    f"'{json.dumps(ing_list, ensure_ascii=False)}', '{json.dumps(sub_list, ensure_ascii=False)}', '{rec.url}')"
+            sql_request(query)
+            self._update_content()
+
+    def edit_recette(self, rec):
+        if rec.id not in self.id_list():
+            raise Exception(f"Recette : \"{rec.nom}\" pas dans la base de données")
+        else:
+            ing_list = [[ing.nom, ing.quantite.qte, ing.quantite.type] for ing in rec.ingredients]
+            sub_list = {key: [ing.nom for ing in rec.substituts[key]] for key in rec.substituts}
+            query = f"UPDATE recettes SET " \
+                    f"nom = '{rec.nom}', img = '{rec.photo}', " \
+                    f"ingredients = '{json.dumps(ing_list, ensure_ascii=False)}', " \
+                    f"substituts = '{json.dumps(sub_list, ensure_ascii=False)}', " \
+                    f"url = '{rec.url}'" \
+                    f"WHERE id = {rec.id}"
+            sql_request(query)
+            self._update_content()
+
+    def remove_recette(self, rec):
+        if rec.id not in self.id_list():
+            raise Exception(f"Recette : \"{rec.nom}\" pas dans la base de données")
+        else:
+            query = f"DELETE FROM recettes WHERE id = {rec.id}"
+            sql_request(query)
+            self._update_content()
 
     def get_recette_by_name(self, nom, cutoff=0.6):
         match = get_close_matches(nom, self.name_list(), cutoff=cutoff)
@@ -135,6 +192,9 @@ class RecettesDB(list):
 
     def get_scores(self, ing_list):
         return [rec.get_score(ing_list) for rec in self]
+
+    def get_next_id(self):
+        return max([rec.id for rec in self]) + 1
 
 
 ingredients = IngredientsDB()

@@ -6,6 +6,7 @@
     <div class="card">
         <div class="card-body">
             <form action="edit-recette.html" method="post" enctype='multipart/form-data'>
+                <input type="hidden" name="rec_id" id="rec_id" value="{{ rec.id }}">
                 <div class="form-group">
                     <label for="rec_name">Nom de la recette</label>
                     <input type="text" class="form-control" id="rec_name" name="rec_name" aria-describedby="nameHelp" placeholder="Ma super recette qui déchire" value="{{ rec.nom }}">
