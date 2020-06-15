@@ -3,7 +3,7 @@ import difflib
 from flask import Blueprint, render_template, request, jsonify
 
 from app import userdata
-from app.databaserw import ingredients, recettes
+from app.sql_db import ingredients, recettes
 
 bp = Blueprint("search", __name__, url_prefix='/search')
 

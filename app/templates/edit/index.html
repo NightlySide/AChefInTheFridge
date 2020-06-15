@@ -9,7 +9,7 @@
                 {% for rec in recettes.sort_by_name() %}
                 <li class="list-group-item">
                 <span class="align-middle" style="line-height: 2.5em">{{ rec.nom }}</span>
-                <a href="edit-recette.html?rec={{ rec.nom }}" class="float-right align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
+                <a href="edit-recette.html?rec={{ rec.id }}" class="float-right align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
                 </li>
                 {% endfor %}
             </ul>
@@ -22,7 +22,7 @@
                 {% for ing in ingredients.sort_by_name() %}
                 <li class="list-group-item">
                 <span class="align-middle" style="line-height: 2.5em">{{ ing.nom }}</span>
-                <a href="edit-ingredient.html?ing={{ ing.nom }}" class="float-right align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
+                <a href="edit-ingredient.html?ing={{ ing.id }}" class="float-right align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
                 </li>
                 {% endfor %}
             </ul>

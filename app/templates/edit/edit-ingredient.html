@@ -6,6 +6,7 @@
     <div class="card">
         <div class="card-body">
             <form action="edit-ingredient.html" method="post">
+                <input type="hidden" name="ing_id" id="ing_id" value="{{ ing.id }}">
                 <div class="form-group">
                     <label for="ing_name">Nom de l'ingrédient</label>
                     <input type="text" class="form-control" id="ing_name" name="ing_name" aria-describedby="nameHelp" value="{{ ing.nom }}">
