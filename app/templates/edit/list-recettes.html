@@ -10,8 +10,8 @@
                 <li class="list-group-item">
                 <span class="align-middle" style="line-height: 2.5em">{{ rec.nom }}</span>
                 <div class="float-right">
-                        <a href="edit-recette.html?rec={{ rec.nom }}" class="align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
-                        <a class="align-middle btn btn-danger" onclick="confirm_delete(this, '{{ rec.nom }}');">Supprimer <i class="material-icons align-middle">delete_forever</i></a>
+                        <a href="edit-recette.html?rec={{ rec.id }}" class="align-middle btn btn-secondary">Editer <i class="material-icons align-middle">edit</i></a>
+                        <a class="align-middle btn btn-danger" onclick="confirm_delete(this, '{{ rec.id }}');">Supprimer <i class="material-icons align-middle">delete_forever</i></a>
                 </div>
                 </li>
                 {% endfor %}
