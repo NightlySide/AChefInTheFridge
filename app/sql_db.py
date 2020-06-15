@@ -145,7 +145,9 @@ class RecettesDB(list):
             sub_list = {key: [ing.nom for ing in rec.substituts[key]] for key in rec.substituts}
             query = f"INSERT INTO recettes (id, nom, img, ingredients, substituts, url) " \
                     f"VALUES ('{rec.id}', '{rec.nom}', '{rec.photo}', " \
-                    f"'{json.dumps(ing_list, ensure_ascii=False)}', '{json.dumps(sub_list, ensure_ascii=False)}', '{rec.url}')"
+                    f"'{json.dumps(ing_list, ensure_ascii=False)}', " \
+                    f"'{json.dumps(sub_list, ensure_ascii=False)}', " \
+                    f"'{rec.url}')"
             sql_request(query)
             self._update_content()
 
