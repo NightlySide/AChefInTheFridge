@@ -11,7 +11,8 @@ bp = Blueprint("search", __name__, url_prefix='/search')
 @bp.route("/", methods=["POST", "GET"])
 @bp.route("/index.html", methods=["POST", "GET"])
 def index():
-    ing_list = recettes_to_show = []
+    ing_list = []
+    recettes_to_show = []
     if "ing_list" in session:
         ing_list = session["ing_list"]
     if "rec_list" in session:
@@ -48,6 +49,7 @@ def index():
 
     session["ing_list"] = ing_list
     session["rec_list"] = recettes_to_show
+    print(recettes_to_show)
     rec_list = [(recettes.get_recette_by_id(rec_id), score) for rec_id, score in recettes_to_show]
     ing_list = [ingredients.get_ingredient_by_id(ing_id) for ing_id in ing_list]
     return render_template("search/index.html", recettes=rec_list, ing_list=ing_list)
