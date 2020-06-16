@@ -1,3 +1,6 @@
+import base64
+
+
 def normalize(nom):
     return nom.encode("utf8").decode()
 
@@ -28,6 +31,9 @@ class Recette:
             if sub_name == ing.nom:
                 return True
         return False
+
+    def get_base64_image(self):
+        return base64.b64encode(self.photo).decode()
 
     def get_substituts(self, sub_name):
         if sub_name not in self.substituts:

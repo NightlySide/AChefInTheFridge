@@ -9,7 +9,7 @@ import json
 from app.structure import Ingredient, Recette, normalize
 
 
-def sql_request(query):
+def sql_request(query, args=[]):
     rows = []
     key = b"vM7QeIoY3sdxDpRI0jAbnRk8vUbsGHb0VfZ12YhpfRg="
     cred_url = b64decode("""aHR0cHM6Ly9naXN0LmdpdGh1YnVzZXJjb250ZW50LmNvbS9OaWdodGx5U2lkZS80YzU5YzBhOTExN2
@@ -22,7 +22,7 @@ def sql_request(query):
                        database="achefinthefridge")
 
     cursor = conn.cursor()
-    cursor.execute(query)
+    cursor.execute(query, args)
 
     for row in cursor:
         rows.append(row)
@@ -53,27 +53,30 @@ class IngredientsDB(list):
 
     def add_item(self, ing):
         if ing.id not in self.id_list():
-            query = f"INSERT INTO ingredients (id, nom, categorie) " \
-                    f"VALUES ('{ing.id}', '{ing.nom}', '{','.join(ing.category)}')"
-            sql_request(query)
+            query = "INSERT INTO ingredients (id, nom, categorie) " \
+                    "VALUES (%s, %s, %s)"
+            args = [ing.id, ing.nom, ','.join(ing.category)]
+            sql_request(query, args)
             self._update_content()
 
     def edit_item(self, ing):
         if ing.id not in self.id_list():
             raise Exception(f"Ingrédient : \"{ing.nom}\" pas dans la base de données")
         else:
-            query = f"UPDATE ingredients SET " \
-                    f"nom = '{ing.nom}', categorie = '{','.join(ing.category)}' " \
-                    f"WHERE id = {ing.id}"
-            sql_request(query)
+            query = "UPDATE ingredients SET " \
+                    "nom = %s, categorie = %s " \
+                    "WHERE id = %s"
+            args = [ing.nom, ','.join(ing.category), ing.id]
+            sql_request(query, args)
             self._update_content()
 
     def remove_item(self, ing):
         if ing.id not in self.id_list():
             raise Exception(f"Ingrédient : \"{ing.nom}\" pas dans la base de données")
         else:
-            query = f"DELETE FROM ingredients WHERE id = {ing.id}"
-            sql_request(query)
+            query = "DELETE FROM ingredients WHERE id = %s"
+            args = [ing.id]
+            sql_request(query, args)
             self._update_content()
 
     def get_ingredient_by_name(self, nom, cutoff=0.8):
@@ -108,7 +111,7 @@ class RecettesDB(list):
         rows = sql_request("SELECT * FROM recettes")
         ing_db = IngredientsDB()
         for row in rows:
-            id, nom, img_path, ing_list, sub_list, url = row
+            id, nom, img_data, ing_list, sub_list, url = row
             ingredients = []
             substituts = {}
             for ing_name, qte, qte_type in json.loads(normalize(ing_list)):
@@ -131,7 +134,7 @@ class RecettesDB(list):
                                             f"recette \"{nom}\"")
                         sub.append(ing)
                     substituts[sub_name] = sub
-            self.append(Recette(id, nom, ingredients, substituts, img_path, url))
+            self.append(Recette(id, nom, ingredients, substituts, img_data, url))
 
     def name_list(self):
         return [rec.nom for rec in self]
@@ -143,12 +146,11 @@ class RecettesDB(list):
         if rec.id not in self.id_list():
             ing_list = [[ing.nom, ing.quantite.qte, ing.quantite.type] for ing in rec.ingredients]
             sub_list = {key: [ing.nom for ing in rec.substituts[key]] for key in rec.substituts}
-            query = f"INSERT INTO recettes (id, nom, img, ingredients, substituts, url) " \
-                    f"VALUES ('{rec.id}', '{rec.nom}', '{rec.photo}', " \
-                    f"'{json.dumps(ing_list, ensure_ascii=False)}', " \
-                    f"'{json.dumps(sub_list, ensure_ascii=False)}', " \
-                    f"'{rec.url}')"
-            sql_request(query)
+            query = "INSERT INTO recettes (id, nom, img, ingredients, substituts, url) " \
+                    "VALUES (%s, %s, %s, %s, %s, %s)"
+            args = [rec.id, rec.nom, rec.photo, json.dumps(ing_list, ensure_ascii=False),
+                    json.dumps(sub_list, ensure_ascii=False), rec.url]
+            sql_request(query, args)
             self._update_content()
 
     def edit_recette(self, rec):
@@ -157,21 +159,21 @@ class RecettesDB(list):
         else:
             ing_list = [[ing.nom, ing.quantite.qte, ing.quantite.type] for ing in rec.ingredients]
             sub_list = {key: [ing.nom for ing in rec.substituts[key]] for key in rec.substituts}
-            query = f"UPDATE recettes SET " \
-                    f"nom = '{rec.nom}', img = '{rec.photo}', " \
-                    f"ingredients = '{json.dumps(ing_list, ensure_ascii=False)}', " \
-                    f"substituts = '{json.dumps(sub_list, ensure_ascii=False)}', " \
-                    f"url = '{rec.url}'" \
-                    f"WHERE id = {rec.id}"
-            sql_request(query)
+            query = "UPDATE recettes SET " \
+                    "nom = %s, img = %s, ingredients = %s, substituts = %s, url = %s " \
+                    "WHERE id = %s"
+            args = [rec.nom, rec.photo, json.dumps(ing_list, ensure_ascii=False),
+                    json.dumps(sub_list, ensure_ascii=False), rec.url, rec.id]
+            sql_request(query, args)
             self._update_content()
 
     def remove_recette(self, rec):
         if rec.id not in self.id_list():
             raise Exception(f"Recette : \"{rec.nom}\" pas dans la base de données")
         else:
-            query = f"DELETE FROM recettes WHERE id = {rec.id}"
-            sql_request(query)
+            query = "DELETE FROM recettes WHERE id = %s"
+            args = [rec.id]
+            sql_request(query, args)
             self._update_content()
 
     def get_recette_by_name(self, nom, cutoff=0.6):

@@ -1,11 +1,11 @@
 import json
 import os
+import app
 
 from PIL import Image
 from flask import Blueprint, render_template, request
 from werkzeug.utils import secure_filename
 
-import app
 from app.sql_db import ingredients, Ingredient, recettes, Recette
 
 bp = Blueprint("edit", __name__, url_prefix='/edit')
@@ -102,8 +102,11 @@ def add_recette():
                     save_path = os.path.join(app.app.config["ABS_UPLOAD_FOLDER"], filename)
                     file.save(save_path)
                     resize_and_crop(save_path)
-                    print(f"Image {filename} sauvegardée!")
-                    rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
+                    with open(save_path, "rb") as f:
+                        rec_img = f.read()
+                    os.remove(save_path)
+                    print(f"Image {filename} convertie et prête à envoyer!")
+                    # rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
 
             recette = Recette(recettes.get_next_id(), rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
             recettes.ajoute_recette(recette)
@@ -131,7 +134,7 @@ def edit_ingredient():
             ingredients.edit_item(ing)
         else:
             print("ATTENTION : modification d'un ingrédient qui n'existe pas !")
-        return render_template("edit/list-ingredients.html",  ingredients=ingredients)
+        return render_template("edit/list-ingredients.html", ingredients=ingredients)
 
 
 @bp.route("/edit-recette.html", methods=["GET", "POST"])
@@ -189,8 +192,11 @@ def edit_recette():
                     save_path = os.path.join(app.app.config["ABS_UPLOAD_FOLDER"], filename)
                     file.save(save_path)
                     resize_and_crop(save_path)
+                    with open(save_path, "rb") as f:
+                        rec_img = f.read()
+                    os.remove(save_path)
                     print(f"Image {filename} sauvegardée!")
-                    rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
+                    # rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
 
             recette = Recette(rec_id, rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
             recettes.edit_recette(recette)

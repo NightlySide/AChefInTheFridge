@@ -4,3 +4,5 @@
     * ajouter une fonction menu semaine automatique
 * Ajouter des recettes
 * Ajouter les catégories : petit-dej, déjeuner, diner sur les recettes
+* Ajouter un système de login
+* Ajouter un systeme de modération des recettes

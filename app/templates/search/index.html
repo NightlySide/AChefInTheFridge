@@ -56,7 +56,7 @@
               <!-- Contenu de la recette -->
               <div class="card-body row">
                 <div style="overflow: hidden" class="col-sm-12 col-md-4">
-                  <img src="{{ recette.photo }}" alt="{{ recette.nom }}" class="img-thumbnail float-left recette-img">
+                  <img src="data:image/png;base64,{{ recette.get_base64_image() }}" alt="{{ recette.nom }}" class="img-thumbnail float-left recette-img">
                 </div>
                 <div class="col-md-8 col-sm-12">
                   <h4>Ingrédients</h4>

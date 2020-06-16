@@ -72,7 +72,7 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <img src="{{ rec.photo }}" class="img-thumbnail mx-auto d-block col-md-3 recette-img">
+                        <img src="data:image/png;base64,{{ rec.get_base64_image() }}" class="img-thumbnail mx-auto d-block col-md-3 recette-img">
                     </div>
                 </div>
                 <div class="form-group">
