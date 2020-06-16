@@ -195,7 +195,6 @@ class RecettesDB(list):
         return sorted(self, key=lambda x: x.nom)
 
     def get_scores(self, ing_list):
-        self._update_content()
         return [rec.get_score(ing_list) for rec in self]
 
     def get_next_id(self):

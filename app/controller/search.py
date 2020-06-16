@@ -1,20 +1,22 @@
 import difflib
 
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, session
 
 from app import userdata
 from app.sql_db import ingredients, recettes
 
 bp = Blueprint("search", __name__, url_prefix='/search')
 
-ing_list = userdata.load_ing_list()
-recettes_to_show = []
-
 
 @bp.route("/", methods=["POST", "GET"])
 @bp.route("/index.html", methods=["POST", "GET"])
 def index():
-    global ing_list, recettes_to_show
+    ing_list = recettes_to_show = []
+    if "ing_list" in session:
+        ing_list = session["ing_list"]
+    if "rec_list" in session:
+        recettes_to_show = session["rec_list"]
+
     if request.method == "POST":
         ing_name = request.form.get("add-ingredient")
         ing = ingredients.get_ingredient_by_name(ing_name)
@@ -22,7 +24,7 @@ def index():
             print("Ingrédient non reconnu !")
             # TODO : afficher une erreur sur la page web
         else:
-            ing_list.append(ing)
+            ing_list.append(ing.id)
             userdata.save_ing_list(ing_list)
     elif request.method == "GET":
         rtype = request.args.get("type")
@@ -32,18 +34,23 @@ def index():
             if ing is None:
                 print(f"Ingrédient non présent dans la BDD : \"{ing_name}\"")
                 # TODO : afficher une erreur sur la page web
-            elif ing not in ing_list:
+            elif ing.id not in ing_list:
                 print(f"Ingrédient non trouvé dans la liste : \"{ing_name}\"")
                 # TODO : afficher une erreur sur la page web
             else:
-                ing_list.remove(ing)
+                ing_list.remove(ing.id)
         elif rtype == "search":
-            scores = recettes.get_scores(ing_list)
+            scores = recettes.get_scores([ingredients.get_ingredient_by_id(ing_id) for ing_id in ing_list])
             recettes_to_show = []
             for k in range(len(recettes)):
-                recettes_to_show.append((recettes[k], scores[k]))
+                recettes_to_show.append((recettes[k].id, scores[k]))
             recettes_to_show.sort(key=lambda x: x[1], reverse=True)
-    return render_template("search/index.html", recettes=recettes_to_show, ing_list=ing_list)
+
+    session["ing_list"] = ing_list
+    session["rec_list"] = recettes_to_show
+    rec_list = [(recettes.get_recette_by_id(rec_id), score) for rec_id, score in recettes_to_show]
+    ing_list = [ingredients.get_ingredient_by_id(ing_id) for ing_id in ing_list]
+    return render_template("search/index.html", recettes=rec_list, ing_list=ing_list)
 
 
 @bp.route('/autocomplete', methods=['GET'])
