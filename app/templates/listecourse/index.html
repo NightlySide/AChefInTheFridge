@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}A Chef in the Fridge{% endblock %}
+
+{% block content %}
+    <h1>Préparer une liste de courses</h1>
+    <div style="margin: 2em 0;"></div>
+
+    <div class="card">
+        <div class="card-body">
+            <form method="get" action="/listecourse/index.html">
+                <table id="weektable" class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Jour / Repas</th>
+                            <th>Petit-Déjeuner</th>
+                            <th>Déjeuner</th>
+                            <th>Dinner</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for row in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] %}
+                        <tr>
+                            <th class="align-middle" scope="row">{{ row }}</th>
+                            {% for k in range(3) %}
+                            <td class="align-content-center">
+                                <select name="{{ row.lower() }}-{{ k }}" class="selectpicker search-select" data-live-search="true">
+                                    <option value="">--Veuillez choisir un plat--</option>
+                                    {% for rec in recettes %}
+                                    <option value="{{ rec.id }}" {% if rec_sel[row.lower() ~ "-" ~ k] == rec.id|string %}selected{% endif %}>{{ rec.nom }}</option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            {% endfor %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <input type="submit" id="ing_calc" class="btn btn-primary col-md-2 col-sm-12 align-self-end float-right" value="Calculer">
+            </form>
+        </div>
+    </div>
+
+    <br>
+
+    <div class="card">
+        <div class="card-header">
+            <h2>Ta liste de courses</h2>
+        </div>
+        <div class="card-body">
+            <table class="table table-bordered" id="ing_table">
+                <thead>
+                    <tr>
+                        <th>Ingrédient</th>
+                        <th>Quantité</th>
+                        <th>Retirer ?</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for ing, qte in ing_list %}
+                        <tr>
+                            <td>{{ ing.nom }}</td>
+                            <td>{{ qte }}</td>
+                            <td><a class="align-middle btn btn-danger remove-row">Supprimer <i class="material-icons align-middle">delete_forever</i></a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    $("#ing_table").on('click', '.remove-row', function () {
+       $(this).parents('tr').detach();
+     });
+</script>
+{% endblock %}

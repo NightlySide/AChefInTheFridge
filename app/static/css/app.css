@@ -92,3 +92,9 @@ form.add-ing {
     vertical-align: middle !important;
     display: inline-block;
 }
+
+.search-select {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    display: block !important;
+}

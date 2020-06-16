@@ -71,6 +71,7 @@ class Ingredient:
     FIBRES = "fibres"
     LEGUMES = "legumes"
     EPICES = "epice"
+    AUTRES = "autres"
 
     def __init__(self, id, nom, category=[]):
         self.id = int(id)
@@ -144,3 +145,32 @@ class Quantite:
             return f"{self.qte} Feuilles" if self.qte > 1 else f"{self.qte} Feuille"
         else:
             return str(self.qte)
+
+    def convert(self, q_type, qte=None):
+        if qte is None:
+            norm = self.normalise()
+        else:
+            norm = qte
+        if q_type == Quantite.GRAMME:
+            return norm
+        elif q_type == Quantite.C_CAFE:
+            return norm / 0.5
+        elif q_type == Quantite.C_SOUPE:
+            return norm / 15
+        elif q_type == Quantite.PINCEE:
+            return norm / 0.5
+        elif q_type == Quantite.UNITE:
+            return norm / 55  # oeuf = 55g/unite
+        elif q_type == Quantite.GOUSSE:
+            return norm / 5
+        elif q_type == Quantite.GOUTTE:
+            return norm / 0.000014
+        elif q_type == Quantite.CENTILITRE:
+            return norm / 10
+        # Si le type n'est pas reconnu (ou que c'est une feuille)
+        else:
+            return self.qte
+
+    def __add__(self, other):
+        s = self.normalise() + other.normalise()
+        return Quantite(self.convert(self.type, s), self.type)
