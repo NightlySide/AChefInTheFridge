@@ -37,6 +37,7 @@ def index():
 
 @bp.route("/add-ingredient.html", methods=["POST", "GET"])
 def add_ingredient():
+    ingredients.update_content()
     if request.method == "POST":
         ing_name = request.form.get("ing_name")
         category = request.form.getlist("category")
@@ -54,6 +55,7 @@ def add_ingredient():
 
 @bp.route("/add-recette.html", methods=["POST", "GET"])
 def add_recette():
+    recettes.update_content()
     if request.method == "POST":
         rec_name = request.form.get("rec_name")
         if recettes.get_recette_by_name(rec_name, cutoff=0.9) is not None:
@@ -116,6 +118,7 @@ def add_recette():
 
 @bp.route("/edit-ingredient.html", methods=["GET", "POST"])
 def edit_ingredient():
+    ingredients.update_content()
     if request.method == "GET":
         ing_id = request.args.get("ing")
         if ing_id in [None, ""] or ingredients.get_ingredient_by_id(int(ing_id)) is None:
@@ -139,6 +142,7 @@ def edit_ingredient():
 
 @bp.route("/edit-recette.html", methods=["GET", "POST"])
 def edit_recette():
+    recettes.update_content()
     if request.method == "GET":
         rec_id = request.args.get("rec")
         if rec_id in [None, ""] or recettes.get_recette_by_id(int(rec_id)) is None:
@@ -207,6 +211,7 @@ def edit_recette():
 
 @bp.route("/remove-ingredient.html", methods=["GET"])
 def remove_ingredient():
+    ingredients.update_content()
     ing_id = request.args.get("ing")
     ing = ingredients.get_ingredient_by_id(int(ing_id))
     if ing is not None:
@@ -219,6 +224,7 @@ def remove_ingredient():
 
 @bp.route("/remove-recette.html", methods=["GET"])
 def remove_recette():
+    recettes.update_content()
     rec_id = request.args.get("rec")
     rec = recettes.get_recette_by_id(int(rec_id))
     if rec is not None:

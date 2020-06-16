@@ -36,9 +36,9 @@ def sql_request(query, args=[]):
 class IngredientsDB(list):
     def __init__(self):
         super(IngredientsDB, self).__init__()
-        self._update_content()
+        self.update_content()
 
-    def _update_content(self):
+    def update_content(self):
         self.clear()
         rows = sql_request("SELECT * from ingredients")
         for row in rows:
@@ -57,7 +57,7 @@ class IngredientsDB(list):
                     "VALUES (%s, %s, %s)"
             args = [ing.id, ing.nom, ','.join(ing.category)]
             sql_request(query, args)
-            self._update_content()
+            self.update_content()
 
     def edit_item(self, ing):
         if ing.id not in self.id_list():
@@ -68,7 +68,7 @@ class IngredientsDB(list):
                     "WHERE id = %s"
             args = [ing.nom, ','.join(ing.category), ing.id]
             sql_request(query, args)
-            self._update_content()
+            self.update_content()
 
     def remove_item(self, ing):
         if ing.id not in self.id_list():
@@ -77,7 +77,7 @@ class IngredientsDB(list):
             query = "DELETE FROM ingredients WHERE id = %s"
             args = [ing.id]
             sql_request(query, args)
-            self._update_content()
+            self.update_content()
 
     def get_ingredient_by_name(self, nom, cutoff=0.8):
         match = get_close_matches(nom, self.name_list(), cutoff=cutoff)
@@ -104,9 +104,9 @@ class IngredientsDB(list):
 class RecettesDB(list):
     def __init__(self):
         super(RecettesDB, self).__init__()
-        self._update_content()
+        self.update_content()
 
-    def _update_content(self):
+    def update_content(self):
         self.clear()
         rows = sql_request("SELECT * FROM recettes")
         ing_db = IngredientsDB()
@@ -151,7 +151,7 @@ class RecettesDB(list):
             args = [rec.id, rec.nom, rec.photo, json.dumps(ing_list, ensure_ascii=False),
                     json.dumps(sub_list, ensure_ascii=False), rec.url]
             sql_request(query, args)
-            self._update_content()
+            self.update_content()
 
     def edit_recette(self, rec):
         if rec.id not in self.id_list():
@@ -165,7 +165,7 @@ class RecettesDB(list):
             args = [rec.nom, rec.photo, json.dumps(ing_list, ensure_ascii=False),
                     json.dumps(sub_list, ensure_ascii=False), rec.url, rec.id]
             sql_request(query, args)
-            self._update_content()
+            self.update_content()
 
     def remove_recette(self, rec):
         if rec.id not in self.id_list():
@@ -174,7 +174,7 @@ class RecettesDB(list):
             query = "DELETE FROM recettes WHERE id = %s"
             args = [rec.id]
             sql_request(query, args)
-            self._update_content()
+            self.update_content()
 
     def get_recette_by_name(self, nom, cutoff=0.6):
         match = get_close_matches(nom, self.name_list(), cutoff=cutoff)
