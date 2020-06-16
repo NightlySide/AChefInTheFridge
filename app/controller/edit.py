@@ -63,6 +63,7 @@ def add_recette():
             print("ATTENTION : recette en doublon on enregistre pas")
             print(recettes.get_recette_by_name(rec_name, cutoff=0.8).nom)
         else:
+            rec_type = request.form.getlist("category")
             rec_ingredients = []
             rec_substituts = {}
             rec_img = []
@@ -110,7 +111,8 @@ def add_recette():
                     print(f"Image {filename} convertie et prête à envoyer!")
                     # rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
 
-            recette = Recette(recettes.get_next_id(), rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
+            recette = Recette(recettes.get_next_id(), rec_name, rec_type, rec_ingredients,
+                              rec_substituts, rec_img, rec_url)
             recettes.ajoute_recette(recette)
             return render_template("edit/list-recettes.html", recettes=recettes)
     return render_template("edit/add-recette.html")
@@ -153,6 +155,7 @@ def edit_recette():
     elif request.method == "POST":
         rec_id = int(request.form.get("rec_id"))
         rec_name = request.form.get("rec_name")
+        rec_type = request.form.getlist("category")
         # print(json.loads(request.form.get("ing_list")))
         if recettes.get_recette_by_id(rec_id) is not None:
             rec_ingredients = []
@@ -190,7 +193,7 @@ def edit_recette():
                 file = request.files["rec_img"]
                 if file.filename == "":
                     print("INFO: Aucun fichier n'a été spécifié, on conserve l'image originale")
-                    rec_img = request.form.get("original_img_path")
+                    rec_img = recettes.get_recette_by_id(rec_id).photo
                 elif file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
                     save_path = os.path.join(app.app.config["ABS_UPLOAD_FOLDER"], filename)
@@ -202,7 +205,7 @@ def edit_recette():
                     print(f"Image {filename} sauvegardée!")
                     # rec_img = os.path.join(app.app.config["REL_UPLOAD_FOLDER"], filename)
 
-            recette = Recette(rec_id, rec_name, rec_ingredients, rec_substituts, rec_img, rec_url)
+            recette = Recette(rec_id, rec_name, rec_type, rec_ingredients, rec_substituts, rec_img, rec_url)
             recettes.edit_recette(recette)
         else:
             print("ATTENTION : modification d'une recette qui n'existe pas !")

@@ -12,6 +12,21 @@
                     <small id="nameHelp" class="form-text text-muted">Ce nom sera utilisé partout dans le reste de l'application, donc faites attention aux fautes !</small>
                 </div>
                 <div class="form-group">
+                    Veuillez indiquer le type de repas (Plusieurs choix sont possibles) :
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="petitdejeuner" id="petitdejeuner" name="category">
+                        <label class="form-check-label" for="petitdejeuner">Petit déjeuner</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="dejeuner" id="dejeuner" name="category">
+                        <label class="form-check-label" for="dejeuner">Déjeuner</label>
+                    </div>
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" value="diner" id="diner" name="category">
+                        <label class="form-check-label" for="diner">Diner</label>
+                    </div>
+                </div>
+                <div class="form-group">
                     <label>Ingrédients : </label>
                     <!-- Editable table -->
                     <div id="table" class="table-editable">

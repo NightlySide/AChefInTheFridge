@@ -6,9 +6,10 @@ def normalize(nom):
 
 
 class Recette:
-    def __init__(self, id, nom, ingredients, substituts, photo, url):
+    def __init__(self, id, nom, type_repas, ingredients, substituts, photo, url):
         self.id = int(id)
         self.nom = normalize(nom)
+        self.type_repas = type_repas
         self.ingredients = ingredients
         self.substituts = substituts
         self.photo = photo

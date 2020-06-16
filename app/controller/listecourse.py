@@ -16,10 +16,8 @@ def index():
         for k in range(3):
             if jour + "-" + str(k) in request.args:
                 rec_sel[jour + "-" + str(k)] = request.args.get(jour + "-" + str(k))
-    print(rec_sel.values())
     for rec_id in rec_sel.values():
         if rec_id != "":
-            print(len(ing_qte))
             rec = recettes.get_recette_by_id(int(rec_id))
             for ing in rec.ingredients:
                 for k in range(len(ing_qte)):

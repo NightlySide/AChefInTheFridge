@@ -14,18 +14,19 @@
                             <th>Jour / Repas</th>
                             <th>Petit-Déjeuner</th>
                             <th>Déjeuner</th>
-                            <th>Dinner</th>
+                            <th>Diner</th>
                         </tr>
                     </thead>
                     <tbody>
                         {% for row in ["Lundi", "Mardi", "Mercredi", "Jeudi", "Vendredi", "Samedi", "Dimanche"] %}
                         <tr>
                             <th class="align-middle" scope="row">{{ row }}</th>
+                            {% set types_repas = ["petitdejeuner", "dejeuner", "diner"] %}
                             {% for k in range(3) %}
                             <td class="align-content-center">
                                 <select name="{{ row.lower() }}-{{ k }}" class="selectpicker search-select" data-live-search="true">
                                     <option value="">--Veuillez choisir un plat--</option>
-                                    {% for rec in recettes %}
+                                    {% for rec in recettes.get_recettes_by_type(types_repas[k]) %}
                                     <option value="{{ rec.id }}" {% if rec_sel[row.lower() ~ "-" ~ k] == rec.id|string %}selected{% endif %}>{{ rec.nom }}</option>
                                     {% endfor %}
                                 </select>

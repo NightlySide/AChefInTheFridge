@@ -111,7 +111,8 @@ class RecettesDB(list):
         rows = sql_request("SELECT * FROM recettes")
         ing_db = IngredientsDB()
         for row in rows:
-            id, nom, img_data, ing_list, sub_list, url = row
+            id, nom, type_repas, img_data, ing_list, sub_list, url = row
+            type_repas = type_repas.split(",")
             ingredients = []
             substituts = {}
             for ing_name, qte, qte_type in json.loads(normalize(ing_list)):
@@ -134,7 +135,7 @@ class RecettesDB(list):
                                             f"recette \"{nom}\"")
                         sub.append(ing)
                     substituts[sub_name] = sub
-            self.append(Recette(id, nom, ingredients, substituts, img_data, url))
+            self.append(Recette(id, nom, type_repas, ingredients, substituts, img_data, url))
 
     def name_list(self):
         return [rec.nom for rec in self]
@@ -146,9 +147,9 @@ class RecettesDB(list):
         if rec.id not in self.id_list():
             ing_list = [[ing.nom, ing.quantite.qte, ing.quantite.type] for ing in rec.ingredients]
             sub_list = {key: [ing.nom for ing in rec.substituts[key]] for key in rec.substituts}
-            query = "INSERT INTO recettes (id, nom, img, ingredients, substituts, url) " \
-                    "VALUES (%s, %s, %s, %s, %s, %s)"
-            args = [rec.id, rec.nom, rec.photo, json.dumps(ing_list, ensure_ascii=False),
+            query = "INSERT INTO recettes (id, nom, type_repas, img, ingredients, substituts, url) " \
+                    "VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            args = [rec.id, rec.nom, ','.join(rec.type_repas), rec.photo, json.dumps(ing_list, ensure_ascii=False),
                     json.dumps(sub_list, ensure_ascii=False), rec.url]
             sql_request(query, args)
             self.update_content()
@@ -160,9 +161,9 @@ class RecettesDB(list):
             ing_list = [[ing.nom, ing.quantite.qte, ing.quantite.type] for ing in rec.ingredients]
             sub_list = {key: [ing.nom for ing in rec.substituts[key]] for key in rec.substituts}
             query = "UPDATE recettes SET " \
-                    "nom = %s, img = %s, ingredients = %s, substituts = %s, url = %s " \
+                    "nom = %s, type_repas = %s, img = %s, ingredients = %s, substituts = %s, url = %s " \
                     "WHERE id = %s"
-            args = [rec.nom, rec.photo, json.dumps(ing_list, ensure_ascii=False),
+            args = [rec.nom, ','.join(rec.type_repas), rec.photo, json.dumps(ing_list, ensure_ascii=False),
                     json.dumps(sub_list, ensure_ascii=False), rec.url, rec.id]
             sql_request(query, args)
             self.update_content()
@@ -199,6 +200,9 @@ class RecettesDB(list):
 
     def get_next_id(self):
         return max([rec.id for rec in self]) + 1
+
+    def get_recettes_by_type(self, rec_type):
+        return [rec for rec in self if rec_type in rec.type_repas]
 
 
 ingredients = IngredientsDB()
