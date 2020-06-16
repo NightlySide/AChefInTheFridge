@@ -49,10 +49,15 @@ def index():
 
     session["ing_list"] = ing_list
     session["rec_list"] = recettes_to_show
-    print(recettes_to_show)
+    session.modified = True
     rec_list = [(recettes.get_recette_by_id(rec_id), score) for rec_id, score in recettes_to_show]
     ing_list = [ingredients.get_ingredient_by_id(ing_id) for ing_id in ing_list]
     return render_template("search/index.html", recettes=rec_list, ing_list=ing_list)
+
+
+@bp.before_request
+def make_session_permanent():
+    session.permanent = True
 
 
 @bp.route('/autocomplete', methods=['GET'])
