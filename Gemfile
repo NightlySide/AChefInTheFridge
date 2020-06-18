@@ -1,0 +1,2 @@
+ 
+gem 'wkhtmltopdf-heroku'
