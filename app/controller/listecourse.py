@@ -1,6 +1,6 @@
 import pdfkit
 
-from flask import Blueprint, render_template, request, send_file, make_response
+from flask import Blueprint, render_template, request, make_response
 
 from app.sql_db import recettes
 from app.structure import Quantite
