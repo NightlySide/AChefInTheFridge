@@ -1,5 +1,3 @@
-import os
-
 import pdfkit
 
 from flask import Blueprint, render_template, request, send_file
