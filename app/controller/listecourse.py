@@ -1,6 +1,6 @@
 import pdfkit
 
-from flask import Blueprint, render_template, request, send_file
+from flask import Blueprint, render_template, request, send_file, make_response
 
 from app.sql_db import recettes
 from app.structure import Quantite
@@ -35,5 +35,11 @@ def index():
 
 @bp.route("/faire-pdf.html", methods=["GET"])
 def make_pdf():
-    pdfkit.from_url("https://a-chef-in-the-frige.herokuapp.com/index.html" "liste-courses.pdf")
-    return send_file("../liste-courses.pdf")
+    rendered = render_template("listecourse/pdf_template.html")
+    pdf = pdfkit.from_url(rendered, False)
+
+    response = make_response(pdf)
+    response.headers["Content-Type"] = "application/pdf"
+    response.headers["Content-Disposition"] = "inline; filename=liste-de-courses.pdf"
+
+    return response
