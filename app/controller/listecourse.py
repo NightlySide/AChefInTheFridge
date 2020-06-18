@@ -1,4 +1,8 @@
-from flask import Blueprint, render_template, request
+import os
+
+import pdfkit
+
+from flask import Blueprint, render_template, request, send_file
 
 from app.sql_db import recettes
 from app.structure import Quantite
@@ -29,3 +33,9 @@ def index():
     ing_qte.sort(key=lambda x: x[0].nom)
 
     return render_template("listecourse/index.html", recettes=recettes, rec_sel=rec_sel, ing_list=ing_qte)
+
+
+@bp.route("/faire-pdf.html", methods=["GET"])
+def make_pdf():
+    pdfkit.from_url("https://a-chef-in-the-frige.herokuapp.com/index.html" "liste-courses.pdf")
+    return send_file("../liste-courses.pdf")
