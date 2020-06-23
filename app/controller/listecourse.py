@@ -59,8 +59,7 @@ def make_pdf():
     for ing_name in request.form:
         data.append((ing_name, request.form.get(ing_name)))
 
-    s_path = request.url_root[:-1].replace("https", "http")
-    html = render_template("listecourse/pdf_template.html", data=data, path=s_path)
+    html = render_template("listecourse/pdf_template.html", data=data, path=request.url_root[:-1])
 
     config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
     pdf = pdfkit.from_string(html, False, configuration=config)
