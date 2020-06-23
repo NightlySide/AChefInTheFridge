@@ -1,5 +1,4 @@
 import os
-import platform
 import subprocess
 
 import pdfkit
@@ -19,13 +18,9 @@ def _get_pdfkit_config():
     Returns:
         A pdfkit configuration
     """
-    if platform.system() == 'Windows':
-        return pdfkit.configuration(
-            wkhtmltopdf=os.environ.get('WKHTMLTOPDF_BINARY', 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'))
-    else:
-        WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')],
-                                           stdout=subprocess.PIPE).communicate()[0].strip()
-        return pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
+    WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')],
+                                       stdout=subprocess.PIPE).communicate()[0].strip()
+    return pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
 
 
 @bp.route("/")
@@ -61,8 +56,8 @@ def make_pdf():
 
     html = render_template("listecourse/pdf_template.html", data=data, path=request.url_root[:-1])
 
-    config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
-    pdf = pdfkit.from_string(html, False, configuration=config)
+    # config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
+    pdf = pdfkit.from_string(html, False, configuration=_get_pdfkit_config())
 
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
