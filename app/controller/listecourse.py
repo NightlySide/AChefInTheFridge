@@ -17,6 +17,7 @@ def _get_pdfkit_config():
         A pdfkit configuration
     """
     WKHTMLTOPDF_CMD = subprocess.Popen(['which', 'wkhtmltopdf'], stdout=subprocess.PIPE).communicate()[0].strip()
+    print(WKHTMLTOPDF_CMD)
     return pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
 
 
