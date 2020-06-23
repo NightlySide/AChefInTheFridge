@@ -60,7 +60,9 @@ def make_pdf():
         data.append((ing_name, request.form.get(ing_name)))
 
     html = render_template("listecourse/pdf_template.html", data=data, path=request.url_root[:-1])
-    pdf = pdfkit.from_string(html, False, configuration=_get_pdfkit_config())
+
+    config = pdfkit.configuration(wkhtmltopdf='./bin/wkhtmltopdf')
+    pdf = pdfkit.from_string(html, False, configuration=config)
 
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
