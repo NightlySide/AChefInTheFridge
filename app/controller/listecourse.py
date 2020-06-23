@@ -1,6 +1,4 @@
-import os
 import subprocess
-
 import pdfkit
 
 from flask import Blueprint, render_template, request, make_response
@@ -18,8 +16,7 @@ def _get_pdfkit_config():
     Returns:
         A pdfkit configuration
     """
-    WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')],
-                                       stdout=subprocess.PIPE).communicate()[0].strip()
+    WKHTMLTOPDF_CMD = subprocess.Popen(['which', 'wkhtmltopdf'], stdout=subprocess.PIPE).communicate()[0].strip()
     return pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
 
 
