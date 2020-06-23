@@ -24,9 +24,11 @@ def download_recettes():
 def download_ingredients():
     return send_file("../db/ingredients.json", as_attachment=True)
 
+
 @bp.route("/js/<filename>")
 def static_script(filename):
     return send_file("static/js/"+filename)
+
 
 @bp.route("/css/<filename>")
 def static_stymle(filename):

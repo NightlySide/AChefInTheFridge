@@ -1,9 +1,6 @@
 import pdfkit
-import os
-import json
-import base64
 
-from flask import Blueprint, render_template, request, make_response, url_for
+from flask import Blueprint, render_template, request, make_response
 
 from app.sql_db import recettes
 from app.structure import Quantite
