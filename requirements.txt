@@ -6,4 +6,5 @@ flake8
 mysqlclient~=1.4.6
 requests~=2.23.0
 cryptography~=2.9.2
+git+git://github.com/johnfraney/wkhtmltopdf-pack.git
 pdfkit~=0.6.1

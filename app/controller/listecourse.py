@@ -1,3 +1,7 @@
+import os
+import platform
+import subprocess
+
 import pdfkit
 
 from flask import Blueprint, render_template, request, make_response
@@ -6,6 +10,22 @@ from app.sql_db import recettes
 from app.structure import Quantite
 
 bp = Blueprint("listecourse", __name__, url_prefix='/listecourse')
+
+
+def _get_pdfkit_config():
+    """wkhtmltopdf lives and functions differently depending on Windows or Linux. We
+     need to support both since we develop on windows but deploy on Heroku.
+
+    Returns:
+        A pdfkit configuration
+    """
+    if platform.system() == 'Windows':
+        return pdfkit.configuration(
+            wkhtmltopdf=os.environ.get('WKHTMLTOPDF_BINARY', 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'))
+    else:
+        WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')],
+                                           stdout=subprocess.PIPE).communicate()[0].strip()
+        return pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
 
 
 @bp.route("/")
@@ -40,7 +60,7 @@ def make_pdf():
         data.append((ing_name, request.form.get(ing_name)))
 
     html = render_template("listecourse/pdf_template.html", data=data, path=request.url_root[:-1])
-    pdf = pdfkit.from_string(html, False)
+    pdf = pdfkit.from_string(html, False, configuration=_get_pdfkit_config())
 
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"
