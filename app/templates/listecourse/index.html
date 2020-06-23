@@ -48,25 +48,28 @@
             <h2>Ta liste de courses</h2>
         </div>
         <div class="card-body">
-            <table class="table table-bordered" id="ing_table">
-                <thead>
-                    <tr>
-                        <th>Ingrédient</th>
-                        <th>Quantité</th>
-                        <th>Retirer ?</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for ing, qte in ing_list %}
+            <form class="form" action="/listecourse/faire-pdf.html" method="POST">
+                <table class="table table-bordered" id="ing_table">
+                    <thead>
                         <tr>
-                            <td>{{ ing.nom }}</td>
-                            <td>{{ qte }}</td>
-                            <td><a class="align-middle btn btn-danger remove-row">Supprimer <i class="material-icons align-middle">delete_forever</i></a></td>
+                            <th>Ingrédient</th>
+                            <th>Quantité</th>
+                            <th>Retirer ?</th>
                         </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-            <a class="btn btn-primary" href="/listecourse/faire-pdf.html">Télécharger la liste</a>
+                    </thead>
+                    <tbody>
+                        {% for ing, qte in ing_list %}
+                            <tr>
+                                <td>{{ ing.nom }}</td>
+                                <td>{{ qte }}</td>
+                                <td><a class="align-middle btn btn-danger remove-row">Supprimer <i class="material-icons align-middle">delete_forever</i></a></td>
+                                <input type="hidden" name="{{ ing.nom }}" value="{{ qte }}">
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <input type="submit" class="btn btn-primary" id="download-list" value="Télécharger la liste">
+            </form>
         </div>
     </div>
 {% endblock %}

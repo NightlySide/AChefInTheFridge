@@ -1,6 +1,9 @@
 import pdfkit
+import os
+import json
+import base64
 
-from flask import Blueprint, render_template, request, make_response
+from flask import Blueprint, render_template, request, make_response, url_for
 
 from app.sql_db import recettes
 from app.structure import Quantite
@@ -33,10 +36,14 @@ def index():
     return render_template("listecourse/index.html", recettes=recettes, rec_sel=rec_sel, ing_list=ing_qte)
 
 
-@bp.route("/faire-pdf.html", methods=["GET"])
+@bp.route("/faire-pdf.html", methods=["POST"])
 def make_pdf():
-    rendered = render_template("listecourse/pdf_template.html")
-    pdf = pdfkit.from_url(rendered, False)
+    data = []
+    for ing_name in request.form:
+        data.append((ing_name, request.form.get(ing_name)))
+
+    html = render_template("listecourse/pdf_template.html", data=data, path=request.url_root[:-1])
+    pdf = pdfkit.from_string(html, False)
 
     response = make_response(pdf)
     response.headers["Content-Type"] = "application/pdf"

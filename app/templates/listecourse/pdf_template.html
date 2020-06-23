@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <!-- META -->
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="Une application en python et flask pour trouver la recette idéale à partir des ingrédients dans ton frigo.">
+    <meta name="theme-color" content="#2196f3">
+    <link rel="icon" type="image/png" href="{{ path }}/favicon.png" />
+
+    <title>Liste de courses | A Chef in the Fridge</title>
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="{{ path }}/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ path }}/css/app.css">
+</head>
+
+<body>
+    <div class="container">
+        <h1>A Chef in the fridge | Nightlyside</h1>
+        <div class="card">
+            <div class="card-body">
+                <h2>Liste de courses</h2><br>
+
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th></th>
+                            <th>Ingrédient</th>
+                            <th>Quantité</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for ing_name, qte in data %}
+                        <tr>
+                            <td><input type="checkbox"></td>
+                            <td>{{ ing_name }}</td>
+                            <td>{{ qte }}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <hr>
+    <div class="container" style="margin-top: 5em">
+        <div class="row justify-content-sm-center">
+            <p>© 2020 Alexandre Froehlich | Anaëlle Thouard</p>
+        </div>
+    </div>
+
+    <!-- JS -->
+    <!--<script src="/js/bootstrap.min.js"></script>
+    <script src="/js/app.js"></script>-->
+</body>
